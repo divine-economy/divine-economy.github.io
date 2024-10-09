@@ -29,7 +29,7 @@ updated october 9, 2024
 <b>major tokens i own:</b>
 
 <ul>
-    <li>$eth<li>
+    <li>$eth</li>
     <li>$ar</li>
     <li>$sol</li>
     <li>$btc</li>
