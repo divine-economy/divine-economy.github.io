@@ -1,11 +1,11 @@
 <head>
   <style>
     p {
-      font-family: "Lato", sans-serif;
+      font-family: "l<bato", sans-serif;
     }
   </style>
 </head>
-
+updated october 9, 2024
 
 <b>links:</b>
 
@@ -19,21 +19,21 @@
 <b>things i've helped build:</b>
 
 <ul>
-    <li><a href="https://www.jokerace.io">joke (cofounder, designer)</a></li>
-    <li><a href="https://www.forumeducation.nyc">forum education (cofounder)</a></li>
-    <li><a href="https://davidphelps.substack.com/p/introducing-ecodao">ecodao (cofounder)</a></li>
-    <li><a href="https://www.fastcompany.com/40427033/felix-wants-to-help-frustrated-freelancers-get-paid">felix (cofounder)</a></li>
+    <li><a href="https://www.jokerace.io">joke</a> (cofounder, designer)</li>
+    <li><a href="https://www.forumeducation.nyc">forum education</a> (cofounder)</li>
+    <li><a href="https://davidphelps.substack.com/p/introducing-ecodao">ecodao</a> (cofounder)</li>
+    <li><a href="https://www.fastcompany.com/40427033/felix-wants-to-help-frustrated-freelancers-get-paid">felix</a> (cofounder)</li>
 </ul>
 
 
-major tokens i own:
+<b>major tokens i own:</b>
 
 <ul>
-    <li><a href="https://www.jokerace.io">joke (cofounder, designer)</a></li>
-    <li><a href="https://www.forumeducation.nyc">forum education (cofounder)</a></li>
-    <li><a href="https://davidphelps.substack.com/p/introducing-ecodao">ecodao (cofounder)</a></li>
-    <li><a href="https://www.fastcompany.com/40427033/felix-wants-to-help-frustrated-freelancers-get-paid">felix (cofounder)</a></li>
+    <li>$eth<li>
+    <li>$ar</li>
+    <li>$sol</li>
+    <li>$btc</li>
+    <li>$popcat</li>
 </ul>
-
 
 
