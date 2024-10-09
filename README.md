@@ -1,3 +1,12 @@
+<head>
+  <style>
+    p {
+      font-family: "Lato", sans-serif;
+    }
+  </style>
+</head>
+
+
 links:
 
 <ul>
