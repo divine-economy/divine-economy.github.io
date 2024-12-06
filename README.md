@@ -19,22 +19,22 @@ updated october 9, 2024
 <b>things i've helped build:</b>
 
 <ul>
-    <li><a href="https://www.jokerace.io">joke</a> (cofounder, product designer)</li>
-    <li><a href="https://www.forumeducation.nyc">forum education</a> (cofounder)</li>
-    <li><a href="https://davidphelps.substack.com/p/introducing-ecodao">ecodao</a> (cofounder)</li>
-    <li><a href="https://www.fastcompany.com/40427033/felix-wants-to-help-frustrated-freelancers-get-paid">felix</a> (cofounder)</li>
+    <li><b><a href="https://www.jokerace.io">joke</a></b> (cofounder, product designer)</li>
+    <li><b><a href="https://www.forumeducation.nyc">forum education</a></b> (cofounder)</li>
+    <li><b><a href="https://davidphelps.substack.com/p/introducing-ecodao">ecodao</a></b> (cofounder)</li>
+    <li><b><a href="https://www.fastcompany.com/40427033/felix-wants-to-help-frustrated-freelancers-get-paid">felix</a></b> (cofounder)</li>
 </ul>
 
 
 <b>major tokens i own:</b>
 
 <ul>
-    <li>$eth</li>
+    <b><li>$eth</li>
     <li>$tia</li>
     <li>$ar</li>
     <li>$sol</li>
     <li>$btc</li>
-    <li>$popcat</li>
+    <li>$popcat</li></b>
 </ul>
 
 <b>angel investments:</b>
