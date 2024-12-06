@@ -5,7 +5,7 @@
     }
   </style>
 </head>
-updated october 9, 2024
+updated december 6, 2024
 
 <b>links:</b>
 
@@ -29,15 +29,17 @@ updated october 9, 2024
 <b>major tokens i own:</b>
 
 <ul>
-    <b><li>$eth</li></b>
-    <b><li>$tia</li></b>
-    <b><li>$ar</li></b>
-    <b><li>$sol</li></b>
-    <b><li>$btc</li></b>
-    <b><li>$popcat</li></b>
+    <li>$eth</li>
+    <li>$tia</li>
+    <li>$ar</li>
+    <li>$sol</li>
+    <li>$btc</li>
+    <li>$popcat</li>
 </ul>
 
 <b>angel investments:</b>
+<br>
+2024:
 
 <ul>
     <li>$eth</li>
