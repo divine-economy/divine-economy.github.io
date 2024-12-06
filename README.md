@@ -29,12 +29,12 @@ updated october 9, 2024
 <b>major tokens i own:</b>
 
 <ul>
-    <li>$eth</li>
-    <li>$tia</li>
-    <li>$ar</li>
-    <li>$sol</li>
-    <li>$btc</li>
-    <li>$popcat</li>
+    <li><b>$eth</b></li>
+    <li><b>$tia</b></li>
+    <li><b>$ar</b></li>
+    <li><b>$sol</b></li>
+    <li><b>$btc</b></li>
+    <li><b>$popcat</b></li>
 </ul>
 
 <b>angel investments:</b>
