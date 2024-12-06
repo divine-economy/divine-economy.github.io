@@ -1,7 +1,7 @@
 <head>
   <style>
     p {
-      font-family: "l<bato", sans-serif;
+      font-family: "lato", sans-serif;
     }
   </style>
 </head>
@@ -19,7 +19,7 @@ updated october 9, 2024
 <b>things i've helped build:</b>
 
 <ul>
-    <li><a href="https://www.jokerace.io">joke</a> (cofounder, designer)</li>
+    <li><a href="https://www.jokerace.io">joke</a> (cofounder, product designer)</li>
     <li><a href="https://www.forumeducation.nyc">forum education</a> (cofounder)</li>
     <li><a href="https://davidphelps.substack.com/p/introducing-ecodao">ecodao</a> (cofounder)</li>
     <li><a href="https://www.fastcompany.com/40427033/felix-wants-to-help-frustrated-freelancers-get-paid">felix</a> (cofounder)</li>
@@ -30,6 +30,18 @@ updated october 9, 2024
 
 <ul>
     <li>$eth</li>
+    <li>$tia</li>
+    <li>$ar</li>
+    <li>$sol</li>
+    <li>$btc</li>
+    <li>$popcat</li>
+</ul>
+
+<b>angel investments:</b>
+
+<ul>
+    <li>$eth</li>
+    <li>$tia</li>
     <li>$ar</li>
     <li>$sol</li>
     <li>$btc</li>
