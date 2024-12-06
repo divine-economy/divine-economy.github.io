@@ -25,6 +25,13 @@ updated december 6, 2024
     <li><b><a href="https://www.fastcompany.com/40427033/felix-wants-to-help-frustrated-freelancers-get-paid">felix</a></b> (cofounder)</li>
 </ul>
 
+<b>things i advise:</b>
+
+<ul>
+    <li><b><a href="https://irys.xyz">irys</a></b></li>
+    <li><b><a href="https://www.forumeducation.nyc">forum education</a></b></li>
+</ul>
+
 
 <b>major tokens i own:</b>
 
@@ -37,12 +44,12 @@ updated december 6, 2024
     <li>$popcat</li>
 </ul>
 
-<b>angel investments:</b>
+<b>things i've invested in:</b>
 <br>
-2024:
-
+<i>2024</i>
+<br>
 <ul>
-    <li>$eth</li>
+    <li><a href="https://www.jokerace.io"><b>joke</b></a></li>
     <li>$tia</li>
     <li>$ar</li>
     <li>$sol</li>
