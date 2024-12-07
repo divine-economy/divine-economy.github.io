@@ -33,7 +33,7 @@ updated december 6, 2024
 </ul>
 
 
-<b>major tokens i own:</b>
+<b>major liquids i've bought:</b>
 
 <ul>
     <li>$eth</li>
@@ -44,24 +44,35 @@ updated december 6, 2024
     <li>$popcat</li>
 </ul>
 
-<b>things i've invested in:</b><br>
+<b>things i've invested in</b><br>
 
 <i>2024</i><br>
 <ul>
+    <li><a href="https://megaeth.systems/"><b>megaeth</b></a></li>
+    <li><a href="https://www.monad.xyz"><b>monad</b></a></li><br>
+    <li><a href="https://movementlabs.xyz/"><b>movement</b></a></li>
+    <li><a href="delta.network"><b>delta</b></a></li>
+    <li><a href="https://www.firstbatch.xyz/"><b>first batch</b></a></li>
     <li><a href="https://www.twinelabs.xyz"><b>twine</b></a></li>
     <li><a href="brkt.gg"><b>brkt</b></a></li>
     <li><a href="noise.xyz"><b>noise</b></a></li>
-    <li><a href="puffpaw.xyz"><b>puffpaw</b></a></li>
-    <li><a href="delta.network"><b>delta</b></a></li>
-    <li><a href="https://www.firstbatch.xyz/"><b>first batch</b></a></li>
-    <li><a href="https://megaeth.systems/"><b>megaeth</b></a></li>
     <li><a href="https://www.renzoprotocol.com/"><b>renzo</b></a></li>
     <li><a href="https://www.lagrange.dev/"><b>lagrange</b></a></li><br>
+    <li><a href="puffpaw.xyz"><b>puffpaw</b></a></li>
 </ul>
 
 <i>2023</i><br>
 <ul>
+    <li><a href="https://risczero.com/"><b>risc zero</b></a></li>
+    <li><a href="https://www.skip.build/"><b>skip</b></a></li>
+    <li><a href="https://www.eigenlayer.xyz/"><b>eigenlayer</b></a></li>
     <li><a href="https://www.berachain.com/"><b>berachain</b></a></li>
+    <li><a href="https://www.eclipse.xyz"><b>eclipse</b></a></li>
+    <li><a href="https://www.astria.org/"><b>astria</b></a></li>
+    <li><a href="https://li.fi/"><b>li.fi</b></a></li>
+</ul>
+
+
     <li><a href="brkt.gg"><b>brkt</b></a></li>
     <li><a href="noise.xyz"><b>noise</b></a></li>
     <li><a href="puffpaw.xyz"><b>puffpaw</b></a></li>
