@@ -46,8 +46,8 @@ updated december 6, 2024
 
 <b>things i've invested in:</b><br>
 
-<ul>
 <i>2024</i><br>
+<ul>
     <li><a href="https://www.twinelabs.xyz"><b>twine</b></a></li>
     <li><a href="brkt.gg"><b>brkt</b></a></li>
     <li><a href="noise.xyz"><b>noise</b></a></li>
@@ -59,8 +59,8 @@ updated december 6, 2024
     <li><a href="https://www.lagrange.dev/"><b>lagrange</b></a></li><br>
 </ul>
 
-<ul>
 <i>2023</i><br>
+<ul>
     <li><a href="https://www.berachain.com/"><b>berachain</b></a></li>
     <li><a href="brkt.gg"><b>brkt</b></a></li>
     <li><a href="noise.xyz"><b>noise</b></a></li>
