@@ -98,38 +98,3 @@ updated december 6, 2024
     <li><a href="https://koodos.com/"><b>koodos</b></a></li>
 </ul>
 
-
-
-
-    <li><a href="https://www.polymerlabs.org/"><b>polymer</b></a></li>
-    <li><a href="https://reservoir.tools/"><b>reservoir</b></a></li>
-
-    <li><a href="https://www.eigenlayer.xyz/"><b>eigenlayer</b></a></li>
-    <li><a href="https://www.berachain.com/"><b>berachain</b></a></li>
-    <li><a href="https://www.eclipse.xyz"><b>eclipse</b></a></li>
-    <li><a href="https://www.astria.org/"><b>astria</b></a></li>
-    <li><a href="https://li.fi/"><b>li.fi</b></a></li>
-</ul>
-
-
-    <li><a href="brkt.gg"><b>brkt</b></a></li>
-    <li><a href="noise.xyz"><b>noise</b></a></li>
-    <li><a href="puffpaw.xyz"><b>puffpaw</b></a></li>
-    <li><a href="delta.network"><b>delta</b></a></li>
-    <li><a href="https://www.firstbatch.xyz/"><b>first batch</b></a></li>
-    <li><a href="https://megaeth.systems/"><b>megaeth</b></a></li>
-    <li><a href="https://www.renzoprotocol.com/"><b>renzo</b></a></li>
-    <li><a href="https://www.lagrange.dev/"><b>lagrange</b></a></li><br>
-</ul>
-
-
-
-
-
-
-    <li>$sol</li>
-    <li>$btc</li>
-    <li>$popcat</li>
-</ul>
-
-
