@@ -10,8 +10,8 @@ updated december 6, 2024
 <b>links:</b>
 
 <ul>
-    <li><a href="https://www.davidphelps.substack.com">substack</a></li>
-    <li><a href="twitter.com/divine_economy">twitter</a></li>
+    <li><b><a href="https://www.davidphelps.substack.com">substack</a></b></li>
+    <li><b><a href="twitter.com/divine_economy">twitter</a></b></li>
 </ul>
 
 
