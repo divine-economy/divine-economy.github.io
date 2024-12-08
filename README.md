@@ -33,7 +33,7 @@ updated december 6, 2024
 </ul>
 
 
-<b>major liquids i've bought:</b>
+<b>major liquids i own:</b>
 
 <ul>
     <li>$eth</li>
@@ -44,20 +44,21 @@ updated december 6, 2024
     <li>$popcat</li>
 </ul>
 
-<b>things i've invested in</b><br>
+<b>things i'm invested in</b><br>
 
 <i>2024</i><br>
 <ul>
     <li><a href="https://megaeth.systems/"><b>megaeth</b></a></li>
-    <li><a href="https://www.monad.xyz"><b>monad</b></a></li><br>
+    <li><a href="https://www.monad.xyz"><b>monad</b></a></li>
     <li><a href="https://movementlabs.xyz/"><b>movement</b></a></li>
     <li><a href="delta.network"><b>delta</b></a></li>
     <li><a href="https://www.firstbatch.xyz/"><b>first batch</b></a></li>
     <li><a href="https://www.twinelabs.xyz"><b>twine</b></a></li>
     <li><a href="brkt.gg"><b>brkt</b></a></li>
+    <li><a href="https://mintstars.com/"><b>mintstars</b></a></li>
     <li><a href="noise.xyz"><b>noise</b></a></li>
     <li><a href="https://www.renzoprotocol.com/"><b>renzo</b></a></li>
-    <li><a href="https://www.lagrange.dev/"><b>lagrange</b></a></li><br>
+    <li><a href="https://www.lagrange.dev/"><b>lagrange</b></a></li>
     <li><a href="puffpaw.xyz"><b>puffpaw</b></a></li>
 </ul>
 
@@ -65,6 +66,44 @@ updated december 6, 2024
 <ul>
     <li><a href="https://risczero.com/"><b>risc zero</b></a></li>
     <li><a href="https://www.skip.build/"><b>skip</b></a></li>
+    <li><a href="https://www.eigenlayer.xyz/"><b>eigenlayer</b></a></li>
+    <li><a href="https://www.berachain.com/"><b>berachain</b></a></li>
+    <li><a href="https://www.eclipse.xyz"><b>eclipse</b></a></li>
+    <li><a href="https://www.astria.org/"><b>astria</b></a></li>
+    <li><a href="https://li.fi/"><b>li.fi</b></a></li>
+    <li><a href="https://catalabs.org/"><b>cata labs</b></a></li>
+    <li><a href="https://www.sei.io/"><b>sei</b></a></li>
+</ul>
+
+<i>2022</i><br>
+<ul>
+    <li><a href="https://irys.xyz/"><b>irys</b></a></li>
+    <li><a href="https://www.litprotocol.com/"><b>lit</b></a></li>
+    <li><a href="https://boost.xyz/"><b>boost</b></a></li>
+    <li><a href="https://dirt.fyi/"><b>dirt</b></a></li>
+    <li><a href="https://www.jia.xyz/"><b>jia</b></a></li>
+    <li><a href="https://party.app/"><b>party</b></a></li>
+    <li><a href="https://workweek.com/"><b>workweek</b></a></li>
+    <li><a href="https://www.magna.so/"><b>magna</b></a></li>
+</ul>
+
+<i>2021</i><br>
+<ul>
+    <li><a href="https://ceramic.network/"><b>ceramic</b></a></li>
+    <li><a href="https://www.vitruveo.xyz/"><b>vitruveo</b></a></li>
+    <li><a href="https://www.genesis.xyz/"><b>genesis</b></a></li>
+    <li><a href="https://guild.xyz/"><b>guild</b></a></li>
+    <li><a href="https://cabin.city/"><b>cabin</b></a></li>
+    <li><a href="https://www.forage.xyz/"><b>forage</b></a></li>
+    <li><a href="https://koodos.com/"><b>koodos</b></a></li>
+</ul>
+
+
+
+
+    <li><a href="https://www.polymerlabs.org/"><b>polymer</b></a></li>
+    <li><a href="https://reservoir.tools/"><b>reservoir</b></a></li>
+
     <li><a href="https://www.eigenlayer.xyz/"><b>eigenlayer</b></a></li>
     <li><a href="https://www.berachain.com/"><b>berachain</b></a></li>
     <li><a href="https://www.eclipse.xyz"><b>eclipse</b></a></li>
