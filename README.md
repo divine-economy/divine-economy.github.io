@@ -44,7 +44,7 @@ updated december 6, 2024
     <li>$popcat</li>
 </ul>
 
-<b>things i'm invested in</b><br>
+<b>things i've invested in</b><br>
 
 <i>2024</i><br>
 <ul>
@@ -79,10 +79,12 @@ updated december 6, 2024
 <ul>
     <li><a href="https://irys.xyz/"><b>irys</b></a></li>
     <li><a href="https://www.litprotocol.com/"><b>lit</b></a></li>
+    <li><a href="www.kyve.network"><b>kyve</b></a></li>
     <li><a href="https://boost.xyz/"><b>boost</b></a></li>
     <li><a href="https://dirt.fyi/"><b>dirt</b></a></li>
     <li><a href="https://www.jia.xyz/"><b>jia</b></a></li>
     <li><a href="https://party.app/"><b>party</b></a></li>
+    <li><b><s>station</b></s> &#40;acquired by base&#41;</a>
     <li><a href="https://workweek.com/"><b>workweek</b></a></li>
     <li><a href="https://www.magna.so/"><b>magna</b></a></li>
 </ul>
@@ -91,10 +93,13 @@ updated december 6, 2024
 <ul>
     <li><a href="https://ceramic.network/"><b>ceramic</b></a></li>
     <li><a href="https://www.vitruveo.xyz/"><b>vitruveo</b></a></li>
+    <li><a href="https://yup.io/"><b>yup</b></a></li>
     <li><a href="https://www.genesis.xyz/"><b>genesis</b></a></li>
     <li><a href="https://guild.xyz/"><b>guild</b></a></li>
     <li><a href="https://cabin.city/"><b>cabin</b></a></li>
     <li><a href="https://www.forage.xyz/"><b>forage</b></a></li>
     <li><a href="https://koodos.com/"><b>koodos</b></a></li>
+    <li><b><s>govrn</s></b> &#40;shut down&#41;</li>
+    <li><b><s>twali</s></b> &#40;shut down&#41;</li>
 </ul>
 
