@@ -84,7 +84,7 @@ updated december 6, 2024
     <li><a href="https://dirt.fyi/"><b>dirt</b></a></li>
     <li><a href="https://www.jia.xyz/"><b>jia</b></a></li>
     <li><a href="https://party.app/"><b>party</b></a></li>
-    <li><s>station</s> &#40;acquired by base&#41;
+    <li><s>station</s> &#40;acquired by base&#41;</li>
     <li><a href="https://workweek.com/"><b>workweek</b></a></li>
     <li><a href="https://www.magna.so/"><b>magna</b></a></li>
 </ul>
