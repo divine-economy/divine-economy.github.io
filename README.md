@@ -80,6 +80,7 @@ updated december 6, 2024
     <li><a href="https://irys.xyz/"><b>irys</b></a></li>
     <li><a href="https://www.litprotocol.com/"><b>lit</b></a></li>
     <li><a href="www.kyve.network"><b>kyve</b></a></li>
+    <li><a href="https://www.polymerlabs.org/"><b>polymer</b></a></li>
     <li><a href="https://boost.xyz/"><b>boost</b></a></li>
     <li><a href="https://dirt.fyi/"><b>dirt</b></a></li>
     <li><a href="https://www.jia.xyz/"><b>jia</b></a></li>
