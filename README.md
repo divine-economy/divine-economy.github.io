@@ -65,7 +65,7 @@ updated december 6, 2024
 <i>2023</i><br>
 <ul>
     <li><a href="https://risczero.com/"><b>risc zero</b></a></li>
-    <li><a href="https://www.skip.build/"><b>skip</b></a></li>
+    <li>skip &#40;acquired by ICF&#41;</li>
     <li><a href="https://www.eigenlayer.xyz/"><b>eigenlayer</b></a></li>
     <li><a href="https://www.berachain.com/"><b>berachain</b></a></li>
     <li><a href="https://www.eclipse.xyz"><b>eclipse</b></a></li>
