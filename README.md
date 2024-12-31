@@ -59,6 +59,7 @@ updated december 6, 2024
     <li><a href="https://mintstars.com/"><b>mintstars</b></a></li>
     <li><a href="noise.xyz"><b>noise</b></a></li>
     <li><a href="https://www.renzoprotocol.com/"><b>renzo</b></a></li>
+    <li><a href="https://github.com/zerufinance"><b>zeru</b></a></li>
     <li><a href="https://www.lagrange.dev/"><b>lagrange</b></a></li>
     <li><a href="puffpaw.xyz"><b>puffpaw</b></a></li>
 </ul>
