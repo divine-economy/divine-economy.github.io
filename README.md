@@ -41,6 +41,7 @@ updated december 6, 2024
     <li>$ar</li>
     <li>$sol</li>
     <li>$btc</li>
+    <li>$ai16z</li>
     <li>$popcat</li>
 </ul>
 
