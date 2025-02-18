@@ -5,7 +5,7 @@
     }
   </style>
 </head>
-updated december 6, 2024
+updated february 18, 2025
 
 <b>links:</b>
 
@@ -38,19 +38,23 @@ updated december 6, 2024
 <ul>
     <li>$eth</li>
     <li>$tia</li>
-    <li>$ar</li>
-    <li>$sol</li>
     <li>$btc</li>
-    <li>$ai16z</li>
-    <li>$popcat</li>
+    <li>$bera</li>
 </ul>
 
 <b>things i've invested in</b><br>
+
+i>2025</i><br>
+<ul>
+    <li><a href="https://linktr.ee/avon_xyz"><b>avon</b></a></li>
+    <li><a href="https://www.herd.eco/"><b>herd</b></a></li>
+</ul>
 
 <i>2024</i><br>
 <ul>
     <li><a href="https://megaeth.systems/"><b>megaeth</b></a></li>
     <li><a href="https://www.monad.xyz"><b>monad</b></a></li>
+    <li><a href="https://www.gte.xyz/"><b>gte</b></a></li>
     <li><a href="https://movementlabs.xyz/"><b>movement</b></a></li>
     <li><a href="delta.network"><b>delta</b></a></li>
     <li><a href="https://www.firstbatch.xyz/"><b>first batch</b></a></li>
