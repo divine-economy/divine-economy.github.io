@@ -77,7 +77,7 @@ updated february 18, 2025
     <li><a href="https://www.eclipse.xyz"><b>eclipse</b></a></li>
     <li><a href="https://www.astria.org/"><b>astria</b></a></li>
     <li><a href="https://li.fi/"><b>li.fi</b></a></li>
-    <li><a href="https://catalabs.org/"><b>cata labs</b></a></li>
+    <li>catalyst &#40;acquired by li.fi&#41;</li>
     <li><a href="https://www.sei.io/"><b>sei</b></a></li>
 </ul>
 
