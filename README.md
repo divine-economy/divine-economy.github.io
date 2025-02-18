@@ -44,7 +44,7 @@ updated february 18, 2025
 
 <b>things i've invested in</b><br>
 
-i>2025</i><br>
+<i>2025</i><br>
 <ul>
     <li><a href="https://linktr.ee/avon_xyz"><b>avon</b></a></li>
     <li><a href="https://www.herd.eco/"><b>herd</b></a></li>
