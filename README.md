@@ -36,10 +36,9 @@ updated february 18, 2025
 <b>major liquids i own:</b>
 
 <ul>
-    <li>$eth</li>
-    <li>$tia</li>
+    <li>$aave</li>
     <li>$btc</li>
-    <li>$bera</li>
+   
 </ul>
 
 <b>things i've invested in</b><br>
