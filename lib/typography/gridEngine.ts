@@ -33,9 +33,9 @@ export function generateGlyph(
       const thickness = baseThickness; // Ignore stroke.weight for now - keeps it consistent
 
       if (stroke.type === 'curve' || stroke.type === 'blob') {
-        pathData += createBlobPath(scaledPoints, thickness, true);
+        pathData += createBlobPath(scaledPoints, thickness, true, params.blobSmoothness);
       } else {
-        pathData += createBlobPath(scaledPoints, thickness, false);
+        pathData += createBlobPath(scaledPoints, thickness, false, params.blobSmoothness);
       }
     }
 
@@ -59,16 +59,16 @@ export function generateGlyph(
 }
 
 /**
- * Create a blob-like path with rounded ends
+ * Create a blob-like path - NO rounded caps
  */
-function createBlobPath(points: Point[], thickness: number, curved: boolean): string {
+function createBlobPath(points: Point[], thickness: number, curved: boolean, smoothness: number): string {
   if (points.length < 2) return '';
 
   const halfThickness = thickness / 2;
 
   if (points.length === 2) {
-    // Simple stroke with rounded ends
-    return createRoundedStroke(points[0], points[1], thickness);
+    // Simple stroke - just a rectangle
+    return createSimpleStroke(points[0], points[1], thickness);
   }
 
   // Multi-point path - create offset curves
@@ -90,60 +90,48 @@ function createBlobPath(points: Point[], thickness: number, curved: boolean): st
     });
   }
 
-  // Build path with rounded caps
-  let path = '';
+  // Build path - start at first left point
+  let path = `M ${leftSide[0].x} ${leftSide[0].y} `;
 
-  // Start cap (rounded)
-  const startAngle = Math.atan2(
-    leftSide[0].y - rightSide[0].y,
-    leftSide[0].x - rightSide[0].x
-  );
-  const startCenterX = (leftSide[0].x + rightSide[0].x) / 2;
-  const startCenterY = (leftSide[0].y + rightSide[0].y) / 2;
-
-  path += `M ${leftSide[0].x} ${leftSide[0].y} `;
-  path += `A ${halfThickness} ${halfThickness} 0 0 1 ${rightSide[0].x} ${rightSide[0].y} `;
-
-  // Right side
-  for (let i = 1; i < rightSide.length; i++) {
-    if (curved) {
-      // Smooth curves using quadratic bezier
-      const prev = rightSide[i - 1];
-      const curr = rightSide[i];
+  // Left side to end
+  for (let i = 1; i < leftSide.length; i++) {
+    if (curved && smoothness > 50) {
+      const prev = leftSide[i - 1];
+      const curr = leftSide[i];
       const cpx = (prev.x + curr.x) / 2;
       const cpy = (prev.y + curr.y) / 2;
-      path += `Q ${cpx} ${cpy} ${curr.x} ${curr.y} `;
-    } else {
-      path += `L ${rightSide[i].x} ${rightSide[i].y} `;
-    }
-  }
-
-  // End cap (rounded)
-  const lastIdx = leftSide.length - 1;
-  path += `A ${halfThickness} ${halfThickness} 0 0 1 ${leftSide[lastIdx].x} ${leftSide[lastIdx].y} `;
-
-  // Left side (reversed)
-  for (let i = leftSide.length - 2; i >= 0; i--) {
-    if (curved) {
-      const curr = leftSide[i];
-      const next = leftSide[i + 1];
-      const cpx = (curr.x + next.x) / 2;
-      const cpy = (curr.y + next.y) / 2;
       path += `Q ${cpx} ${cpy} ${curr.x} ${curr.y} `;
     } else {
       path += `L ${leftSide[i].x} ${leftSide[i].y} `;
     }
   }
 
-  path += 'Z ';
+  // Connect to right side end
+  path += `L ${rightSide[rightSide.length - 1].x} ${rightSide[rightSide.length - 1].y} `;
+
+  // Right side back to start (reversed)
+  for (let i = rightSide.length - 2; i >= 0; i--) {
+    if (curved && smoothness > 50) {
+      const curr = rightSide[i];
+      const next = rightSide[i + 1];
+      const cpx = (curr.x + next.x) / 2;
+      const cpy = (curr.y + next.y) / 2;
+      path += `Q ${cpx} ${cpy} ${curr.x} ${curr.y} `;
+    } else {
+      path += `L ${rightSide[i].x} ${rightSide[i].y} `;
+    }
+  }
+
+  // Close path back to start
+  path += `Z `;
 
   return path;
 }
 
 /**
- * Create a simple rounded stroke between two points
+ * Create a simple stroke between two points - just a rectangle
  */
-function createRoundedStroke(start: Point, end: Point, thickness: number): string {
+function createSimpleStroke(start: Point, end: Point, thickness: number): string {
   const dx = end.x - start.x;
   const dy = end.y - start.y;
   const length = Math.sqrt(dx * dx + dy * dy);
@@ -159,13 +147,12 @@ function createRoundedStroke(start: Point, end: Point, thickness: number): strin
   const p3 = { x: end.x - perpX * halfThickness, y: end.y - perpY * halfThickness };
   const p4 = { x: start.x - perpX * halfThickness, y: start.y - perpY * halfThickness };
 
-  // Create path with rounded ends
+  // Simple rectangle - NO rounded caps
   return `
     M ${p1.x} ${p1.y}
     L ${p2.x} ${p2.y}
-    A ${halfThickness} ${halfThickness} 0 0 1 ${p3.x} ${p3.y}
+    L ${p3.x} ${p3.y}
     L ${p4.x} ${p4.y}
-    A ${halfThickness} ${halfThickness} 0 0 1 ${p1.x} ${p1.y}
     Z
   `;
 }
