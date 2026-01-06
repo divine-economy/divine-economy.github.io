@@ -34,59 +34,36 @@ export interface GridCell {
 // PARAMETERS
 // ============================================================================
 
-export type FillStyle = 'solid' | 'outline-only' | 'hollow';
-export type OrganicTemplate = 'blob' | 'branch' | 'hybrid';
-
 export interface Parameters {
-  // Edge Pixels
-  edgePixelSize: number;       // 10-80 - Size of pixels on the outline
-  edgePixelSpacing: number;    // 20-150 - Space between edge pixels
-  cornerRadius: number;        // 0-50 - Roundness of edge pixels
-
   // Blob Shape
-  blobThickness: number;       // 50-200 - Thickness of organic strokes
+  blobThickness: number;       // 30-150 - Thickness of organic strokes
   blobSmoothness: number;      // 0-100 - How smooth/curvy the blobs are
-  curveTension: number;        // 0.2-1.0 - Tightness of curves
 
-  // Form & Structure
-  organicTemplate: OrganicTemplate;
-  fillStyle: FillStyle;        // solid, outline-only, or hollow
-  symmetryStrength: number;    // 0-100
+  // Pixel Grid Overlay
+  pixelSize: number;           // 5-40 - Size of each pixel square
+  gridLineWidth: number;       // 0.5-5 - Thickness of grid lines between pixels
+  gridLineLightness: number;   // 0-100 - Grid line color (0=black, 100=white)
 
   // Typography Metrics
-  width: number;               // 60-140
-  tracking: number;            // -100-300
-  monospace: boolean;
-
-  // Advanced Tweaks
-  flowStrength: number;        // 0-100 - Organic undulation
-  branchThickness: number;     // 0.5-2.5 - Width at junctions
+  width: number;               // 60-140 - Letter width
+  tracking: number;            // -100-300 - Letter spacing
+  monospace: boolean;          // Fixed width letters
 }
 
 export const DEFAULT_PARAMETERS: Parameters = {
-  // Edge Pixels
-  edgePixelSize: 30,
-  edgePixelSpacing: 50,
-  cornerRadius: 20,
-
   // Blob Shape
-  blobThickness: 120,
+  blobThickness: 100,
   blobSmoothness: 70,
-  curveTension: 0.6,
 
-  // Form & Structure
-  organicTemplate: 'blob',
-  fillStyle: 'solid',
-  symmetryStrength: 30,
+  // Pixel Grid Overlay
+  pixelSize: 15,
+  gridLineWidth: 2,
+  gridLineLightness: 30,
 
   // Typography Metrics
   width: 100,
   tracking: 0,
   monospace: false,
-
-  // Advanced Tweaks
-  flowStrength: 60,
-  branchThickness: 1.2,
 };
 
 // ============================================================================
@@ -101,72 +78,58 @@ export interface Preset {
 
 export const PRESETS: Preset[] = [
   {
-    name: 'Smooth Blob',
-    description: 'Organic shapes with tiny edge pixels',
+    name: 'Default',
+    description: 'Balanced organic blobs with visible pixel grid',
     parameters: {
       ...DEFAULT_PARAMETERS,
-      edgePixelSize: 20,
-      edgePixelSpacing: 40,
-      cornerRadius: 30,
-      blobThickness: 150,
-      blobSmoothness: 90,
-      flowStrength: 80,
+    },
+  },
+  {
+    name: 'Fine Grid',
+    description: 'Small pixels with subtle grid lines',
+    parameters: {
+      ...DEFAULT_PARAMETERS,
+      pixelSize: 8,
+      gridLineWidth: 1,
+      gridLineLightness: 40,
+      blobThickness: 90,
+      blobSmoothness: 85,
     },
   },
   {
     name: 'Chunky Retro',
-    description: 'Large pixels with bold blobs',
+    description: 'Large pixels with bold grid',
     parameters: {
       ...DEFAULT_PARAMETERS,
-      edgePixelSize: 60,
-      edgePixelSpacing: 80,
-      cornerRadius: 10,
-      blobThickness: 180,
+      pixelSize: 25,
+      gridLineWidth: 3,
+      gridLineLightness: 20,
+      blobThickness: 130,
       blobSmoothness: 50,
-      flowStrength: 40,
     },
   },
   {
-    name: 'Delicate Flow',
-    description: 'Thin strokes with small detailed pixels',
+    name: 'Smooth Flow',
+    description: 'Very curvy blobs with fine mesh',
     parameters: {
       ...DEFAULT_PARAMETERS,
-      edgePixelSize: 15,
-      edgePixelSpacing: 30,
-      cornerRadius: 25,
-      blobThickness: 80,
+      pixelSize: 10,
+      gridLineWidth: 1.5,
+      gridLineLightness: 35,
+      blobThickness: 85,
       blobSmoothness: 95,
-      curveTension: 0.8,
-      flowStrength: 90,
-      branchThickness: 0.8,
     },
   },
   {
-    name: 'Geometric Balance',
-    description: 'Medium pixels with structured blobs',
+    name: 'High Contrast',
+    description: 'Thick blobs with prominent grid',
     parameters: {
       ...DEFAULT_PARAMETERS,
-      edgePixelSize: 35,
-      edgePixelSpacing: 60,
-      cornerRadius: 15,
-      blobThickness: 120,
+      pixelSize: 18,
+      gridLineWidth: 4,
+      gridLineLightness: 15,
+      blobThickness: 140,
       blobSmoothness: 60,
-      symmetryStrength: 70,
-      flowStrength: 50,
-    },
-  },
-  {
-    name: 'Outline Only',
-    description: 'Hollow letters with pixel edges',
-    parameters: {
-      ...DEFAULT_PARAMETERS,
-      edgePixelSize: 25,
-      edgePixelSpacing: 45,
-      cornerRadius: 20,
-      blobThickness: 100,
-      blobSmoothness: 75,
-      fillStyle: 'outline-only',
-      flowStrength: 65,
     },
   },
 ];
@@ -201,6 +164,7 @@ export interface GlyphData {
   character: string;
   unicode: number;
   svgPath: string;
+  gridPath: string;
   advanceWidth: number;
 }
 

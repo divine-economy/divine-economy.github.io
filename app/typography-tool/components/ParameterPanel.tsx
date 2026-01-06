@@ -67,12 +67,14 @@ export default function ParameterPanel() {
     const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
 
     setParameters({
-      edgePixelSize: Math.round(randomInRange(15, 70)),
-      edgePixelSpacing: Math.round(randomInRange(30, 120)),
-      cornerRadius: Math.round(randomInRange(0, 45)),
-      blobThickness: Math.round(randomInRange(70, 180)),
+      blobThickness: Math.round(randomInRange(60, 140)),
       blobSmoothness: Math.round(randomInRange(40, 95)),
-      flowStrength: Math.round(randomInRange(30, 90)),
+      pixelSize: Math.round(randomInRange(8, 30)),
+      gridLineWidth: randomInRange(1, 4),
+      gridLineLightness: Math.round(randomInRange(15, 45)),
+      width: parameters.width,
+      tracking: parameters.tracking,
+      monospace: parameters.monospace,
     });
   };
 
@@ -115,43 +117,14 @@ export default function ParameterPanel() {
 
       {/* Parameter Sections */}
       <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
-        {/* Edge Pixels */}
-        <Section title="Edge Pixels">
-          <ParameterSlider
-            label="Pixel Size"
-            value={parameters.edgePixelSize}
-            onChange={(v) => setParameter('edgePixelSize', Math.round(v))}
-            min={10}
-            max={80}
-            step={1}
-          />
-          <ParameterSlider
-            label="Pixel Spacing"
-            value={parameters.edgePixelSpacing}
-            onChange={(v) => setParameter('edgePixelSpacing', Math.round(v))}
-            min={20}
-            max={150}
-            step={5}
-          />
-          <ParameterSlider
-            label="Corner Radius"
-            value={parameters.cornerRadius}
-            onChange={(v) => setParameter('cornerRadius', Math.round(v))}
-            min={0}
-            max={50}
-            step={1}
-            unit="%"
-          />
-        </Section>
-
         {/* Blob Shape */}
         <Section title="Blob Shape">
           <ParameterSlider
             label="Blob Thickness"
             value={parameters.blobThickness}
             onChange={(v) => setParameter('blobThickness', Math.round(v))}
-            min={50}
-            max={200}
+            min={30}
+            max={150}
             step={5}
           />
           <ParameterSlider
@@ -161,50 +134,36 @@ export default function ParameterPanel() {
             min={0}
             max={100}
             step={1}
-          />
-          <ParameterSlider
-            label="Curve Tension"
-            value={parameters.curveTension * 100}
-            onChange={(v) => setParameter('curveTension', v / 100)}
-            min={20}
-            max={100}
-            step={5}
+            unit="%"
           />
         </Section>
 
-        {/* Form & Structure */}
-        <Section title="Form & Structure">
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Template</label>
-            <select
-              value={parameters.organicTemplate}
-              onChange={(e) => setParameter('organicTemplate', e.target.value as any)}
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm"
-            >
-              <option value="blob">Blob</option>
-              <option value="branch">Branch</option>
-              <option value="hybrid">Hybrid</option>
-            </select>
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Fill Style</label>
-            <select
-              value={parameters.fillStyle}
-              onChange={(e) => setParameter('fillStyle', e.target.value as any)}
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm"
-            >
-              <option value="solid">Solid</option>
-              <option value="outline-only">Outline Only</option>
-              <option value="hollow">Hollow</option>
-            </select>
-          </div>
+        {/* Pixel Grid */}
+        <Section title="Pixel Grid">
           <ParameterSlider
-            label="Symmetry"
-            value={parameters.symmetryStrength}
-            onChange={(v) => setParameter('symmetryStrength', Math.round(v))}
+            label="Pixel Size"
+            value={parameters.pixelSize}
+            onChange={(v) => setParameter('pixelSize', Math.round(v))}
+            min={5}
+            max={40}
+            step={1}
+          />
+          <ParameterSlider
+            label="Grid Line Width"
+            value={parameters.gridLineWidth}
+            onChange={(v) => setParameter('gridLineWidth', v)}
+            min={0.5}
+            max={5}
+            step={0.1}
+          />
+          <ParameterSlider
+            label="Grid Line Lightness"
+            value={parameters.gridLineLightness}
+            onChange={(v) => setParameter('gridLineLightness', Math.round(v))}
             min={0}
             max={100}
-            step={5}
+            step={1}
+            unit="%"
           />
         </Section>
 
@@ -236,26 +195,6 @@ export default function ParameterPanel() {
               className="w-4 h-4 bg-gray-800 border-gray-700 rounded accent-blue-500"
             />
           </div>
-        </Section>
-
-        {/* Advanced */}
-        <Section title="Advanced" defaultOpen={false}>
-          <ParameterSlider
-            label="Flow Strength"
-            value={parameters.flowStrength}
-            onChange={(v) => setParameter('flowStrength', Math.round(v))}
-            min={0}
-            max={100}
-            step={5}
-          />
-          <ParameterSlider
-            label="Branch Thickness"
-            value={parameters.branchThickness * 10}
-            onChange={(v) => setParameter('branchThickness', v / 10)}
-            min={5}
-            max={25}
-            step={1}
-          />
         </Section>
       </div>
 

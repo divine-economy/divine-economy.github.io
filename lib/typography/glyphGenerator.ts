@@ -21,12 +21,13 @@ export function generateCharacterGlyph(
   }
 
   // Generate glyph directly from skeleton (deterministic)
-  const { svgPath, advanceWidth } = generateGlyph(skeleton, params);
+  const { svgPath, gridPath, advanceWidth } = generateGlyph(skeleton, params);
 
   return {
     character,
     unicode: character.charCodeAt(0),
     svgPath,
+    gridPath,
     advanceWidth,
   };
 }
@@ -74,6 +75,11 @@ export function previewLetter(
   }
 
   const viewBoxSize = 1000; // Match UNITS_PER_EM
+  const translate = `translate(${(viewBoxSize - glyph.advanceWidth) / 2}, ${(viewBoxSize - 700) / 2})`;
+
+  // Calculate grid line color
+  const colorValue = Math.round((params.gridLineLightness / 100) * 255);
+  const gridColor = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
 
   return `
     <svg
@@ -85,9 +91,14 @@ export function previewLetter(
       <path
         d="${glyph.svgPath}"
         fill="currentColor"
-        transform="translate(${(viewBoxSize - glyph.advanceWidth) / 2}, ${
-    (viewBoxSize - 700) / 2
-  })"
+        transform="${translate}"
+      />
+      <path
+        d="${glyph.gridPath}"
+        fill="none"
+        stroke="${gridColor}"
+        stroke-width="${params.gridLineWidth}"
+        transform="${translate}"
       />
     </svg>
   `;
@@ -121,17 +132,35 @@ export function previewText(
   const width = totalWidth * scale;
   const height = 1000 * scale;
 
-  let paths = '';
+  // Calculate grid line color
+  const colorValue = Math.round((params.gridLineLightness / 100) * 255);
+  const gridColor = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
+
+  let pixelPaths = '';
+  let gridPaths = '';
   let xOffset = 0;
 
   for (const glyph of glyphs) {
-    paths += `
+    const transform = `translate(${xOffset}, 0) scale(${scale})`;
+
+    pixelPaths += `
       <path
         d="${glyph.svgPath}"
         fill="currentColor"
-        transform="translate(${xOffset}, 0) scale(${scale})"
+        transform="${transform}"
       />
     `;
+
+    gridPaths += `
+      <path
+        d="${glyph.gridPath}"
+        fill="none"
+        stroke="${gridColor}"
+        stroke-width="${params.gridLineWidth}"
+        transform="${transform}"
+      />
+    `;
+
     xOffset += glyph.advanceWidth * scale;
   }
 
@@ -142,7 +171,8 @@ export function previewText(
       viewBox="0 0 ${width} ${height}"
       xmlns="http://www.w3.org/2000/svg"
     >
-      ${paths}
+      ${pixelPaths}
+      ${gridPaths}
     </svg>
   `;
 }
