@@ -5,7 +5,6 @@
 
 import { Parameters, GlyphData } from './types';
 import { getLetterSkeleton } from './glyphTemplates';
-import { transformSkeleton } from './organicEngine';
 import { generateGlyph } from './gridEngine';
 
 /**
@@ -21,11 +20,8 @@ export function generateCharacterGlyph(
     return null;
   }
 
-  // Apply organic transformations
-  const transformed = transformSkeleton(skeleton, params);
-
-  // Generate grid-based glyph
-  const { svgPath, advanceWidth } = generateGlyph(transformed, params);
+  // Generate glyph directly from skeleton (deterministic)
+  const { svgPath, advanceWidth } = generateGlyph(skeleton, params);
 
   return {
     character,
