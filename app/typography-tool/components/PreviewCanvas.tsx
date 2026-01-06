@@ -160,8 +160,8 @@ export default function PreviewCanvas() {
             <div className="font-medium">26 Uppercase</div>
           </div>
           <div>
-            <div className="text-gray-400">Grid Resolution</div>
-            <div className="font-medium">{useTypographyStore.getState().parameters.gridResolution}×{useTypographyStore.getState().parameters.gridResolution}</div>
+            <div className="text-gray-400">Style</div>
+            <div className="font-medium">Edge Pixels</div>
           </div>
           <div>
             <div className="text-gray-400">Format</div>

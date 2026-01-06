@@ -1,335 +1,286 @@
 /**
- * Grid Engine - Generates pixel grid representations of letters
+ * Edge-Based Grid Engine - Places pixels only on the outline of organic shapes
  */
 
-import { Parameters, Point, GridCell, Stroke, LetterSkeleton } from './types';
+import { Parameters, Point, Stroke, LetterSkeleton } from './types';
 
-/**
- * Standard units per em (UPM) for font generation
- */
 export const UNITS_PER_EM = 1000;
 export const CAP_HEIGHT = 700;
-export const BASELINE = 0;
 
 /**
- * Create a grid of cells based on resolution
+ * Generate smooth blob outline from letter skeleton
  */
-export function createGrid(resolution: number): GridCell[][] {
-  const grid: GridCell[][] = [];
+export function generateBlobOutline(skeleton: LetterSkeleton, params: Parameters): string {
+  let pathData = '';
 
-  for (let y = 0; y < resolution; y++) {
-    const row: GridCell[] = [];
-    for (let x = 0; x < resolution; x++) {
-      row.push({
-        x,
-        y,
-        filled: false,
-      });
-    }
-    grid.push(row);
-  }
+  for (const stroke of skeleton.strokes) {
+    const points = stroke.points;
+    const strokeWidth = (params.blobThickness / 100) * 100; // Base thickness
 
-  return grid;
-}
+    if (points.length < 2) continue;
 
-/**
- * Convert normalized point (0-1) to grid coordinates
- */
-export function normalizedToGrid(
-  point: Point,
-  resolution: number
-): { x: number; y: number } {
-  return {
-    x: Math.floor(point.x * resolution),
-    y: Math.floor(point.y * resolution),
-  };
-}
+    // Scale points to actual coordinates
+    const scaledPoints = points.map(p => ({
+      x: p.x * UNITS_PER_EM,
+      y: p.y * CAP_HEIGHT,
+    }));
 
-/**
- * Calculate distance from a point to a line segment
- */
-function distanceToLineSegment(
-  point: Point,
-  lineStart: Point,
-  lineEnd: Point
-): number {
-  const A = point.x - lineStart.x;
-  const B = point.y - lineStart.y;
-  const C = lineEnd.x - lineStart.x;
-  const D = lineEnd.y - lineStart.y;
-
-  const dot = A * C + B * D;
-  const lenSq = C * C + D * D;
-  let param = -1;
-
-  if (lenSq !== 0) {
-    param = dot / lenSq;
-  }
-
-  let xx, yy;
-
-  if (param < 0) {
-    xx = lineStart.x;
-    yy = lineStart.y;
-  } else if (param > 1) {
-    xx = lineEnd.x;
-    yy = lineEnd.y;
-  } else {
-    xx = lineStart.x + param * C;
-    yy = lineStart.y + param * D;
-  }
-
-  const dx = point.x - xx;
-  const dy = point.y - yy;
-  return Math.sqrt(dx * dx + dy * dy);
-}
-
-/**
- * Calculate distance from a point to a curve (simplified)
- */
-function distanceToCurve(point: Point, curvePoints: Point[]): number {
-  let minDistance = Infinity;
-
-  // Sample the curve at multiple points
-  for (let i = 0; i < curvePoints.length - 1; i++) {
-    const dist = distanceToLineSegment(point, curvePoints[i], curvePoints[i + 1]);
-    minDistance = Math.min(minDistance, dist);
-  }
-
-  return minDistance;
-}
-
-/**
- * Fill grid cells based on stroke proximity
- */
-export function fillGridFromStrokes(
-  grid: GridCell[][],
-  strokes: Stroke[],
-  params: Parameters
-): GridCell[][] {
-  const resolution = params.gridResolution;
-  const strokeWidth = (params.weight / 100) * (resolution / 10); // Base stroke width
-
-  // Clone grid
-  const filledGrid = grid.map((row) => row.map((cell) => ({ ...cell })));
-
-  // Process each stroke
-  for (const stroke of strokes) {
-    const adjustedWidth = strokeWidth * stroke.weight;
-
-    // Fill cells near the stroke
-    for (let y = 0; y < resolution; y++) {
-      for (let x = 0; x < resolution; x++) {
-        const cellCenter: Point = {
-          x: (x + 0.5) / resolution,
-          y: (y + 0.5) / resolution,
-        };
-
-        let distance: number;
-
-        if (stroke.type === 'curve' || stroke.type === 'blob') {
-          distance = distanceToCurve(cellCenter, stroke.points);
-        } else {
-          // For straight strokes, check each segment
-          let minDist = Infinity;
-          for (let i = 0; i < stroke.points.length - 1; i++) {
-            const dist = distanceToLineSegment(
-              cellCenter,
-              stroke.points[i],
-              stroke.points[i + 1]
-            );
-            minDist = Math.min(minDist, dist);
-          }
-          distance = minDist;
-        }
-
-        // Convert distance to grid units
-        const distanceInGrid = distance * resolution;
-
-        if (distanceInGrid <= adjustedWidth / 2) {
-          filledGrid[y][x].filled = true;
-        }
-      }
+    // Create path with proper width
+    if (stroke.type === 'curve' || stroke.type === 'blob') {
+      // For curves, create a smooth path
+      pathData += createSmoothStroke(scaledPoints, strokeWidth * stroke.weight);
+    } else {
+      // For straight lines
+      pathData += createStraightStroke(scaledPoints, strokeWidth * stroke.weight);
     }
   }
 
-  return filledGrid;
+  return pathData;
 }
 
 /**
- * Apply density gradient to grid
+ * Create a stroke path from points with given width
  */
-export function applyDensityGradient(
-  grid: GridCell[][],
-  params: Parameters
-): GridCell[][] {
-  const resolution = params.gridResolution;
-  const densityFactor = params.fillDensity / 100;
+function createSmoothStroke(points: Point[], width: number): string {
+  if (points.length === 0) return '';
 
-  const processedGrid = grid.map((row) => row.map((cell) => ({ ...cell })));
+  // Create offset paths on both sides of the center line
+  const leftPath: Point[] = [];
+  const rightPath: Point[] = [];
 
-  for (let y = 0; y < resolution; y++) {
-    for (let x = 0; x < resolution; x++) {
-      if (!processedGrid[y][x].filled) continue;
+  for (let i = 0; i < points.length; i++) {
+    const p = points[i];
 
-      let probability = densityFactor;
+    // Calculate perpendicular direction
+    let dx = 0;
+    let dy = 0;
 
-      // Apply gradient based on type
-      if (params.densityGradient === 'center') {
-        const centerX = resolution / 2;
-        const centerY = resolution / 2;
-        const distFromCenter = Math.sqrt(
-          Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)
-        );
-        const maxDist = Math.sqrt(centerX * centerX + centerY * centerY);
-        probability *= 1 - (distFromCenter / maxDist) * 0.5;
-      } else if (params.densityGradient === 'edge') {
-        const centerX = resolution / 2;
-        const centerY = resolution / 2;
-        const distFromCenter = Math.sqrt(
-          Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)
-        );
-        const maxDist = Math.sqrt(centerX * centerX + centerY * centerY);
-        probability *= 0.5 + (distFromCenter / maxDist) * 0.5;
-      } else if (params.densityGradient === 'random') {
-        // Random is handled by scatter noise
-      }
+    if (i === 0 && points.length > 1) {
+      dx = points[1].x - p.x;
+      dy = points[1].y - p.y;
+    } else if (i === points.length - 1) {
+      dx = p.x - points[i - 1].x;
+      dy = p.y - points[i - 1].y;
+    } else {
+      dx = points[i + 1].x - points[i - 1].x;
+      dy = points[i + 1].y - points[i - 1].y;
+    }
 
-      // Apply scatter noise
-      if (params.scatterNoise > 0) {
-        const noiseFactor = 1 - params.scatterNoise / 100;
-        probability *= noiseFactor + (Math.random() * (1 - noiseFactor));
-      }
+    const len = Math.sqrt(dx * dx + dy * dy);
+    if (len > 0) {
+      dx /= len;
+      dy /= len;
+    }
 
-      // Randomly remove cells based on probability
-      if (Math.random() > probability) {
-        processedGrid[y][x].filled = false;
-      }
+    // Perpendicular vector
+    const perpX = -dy;
+    const perpY = dx;
+
+    // Offset points
+    const halfWidth = width / 2;
+    leftPath.push({
+      x: p.x + perpX * halfWidth,
+      y: p.y + perpY * halfWidth,
+    });
+    rightPath.push({
+      x: p.x - perpX * halfWidth,
+      y: p.y - perpY * halfWidth,
+    });
+  }
+
+  // Build path: start -> left side -> end -> right side (reversed) -> close
+  let path = `M ${leftPath[0].x} ${leftPath[0].y} `;
+
+  // Left side with curves
+  for (let i = 1; i < leftPath.length; i++) {
+    if (i === 1 || i === leftPath.length - 1) {
+      path += `L ${leftPath[i].x} ${leftPath[i].y} `;
+    } else {
+      // Use quadratic curves for smoothness
+      const prev = leftPath[i - 1];
+      const curr = leftPath[i];
+      const cpx = (prev.x + curr.x) / 2;
+      const cpy = (prev.y + curr.y) / 2;
+      path += `Q ${cpx} ${cpy} ${curr.x} ${curr.y} `;
     }
   }
 
-  return processedGrid;
-}
-
-/**
- * Apply negative space cutouts
- */
-export function applyNegativeSpace(
-  grid: GridCell[][],
-  params: Parameters,
-  strokes: Stroke[]
-): GridCell[][] {
-  if (params.negativeSpaceCount === 0 || params.negativeSpaceSize === 0) {
-    return grid;
+  // Right side (reversed)
+  for (let i = rightPath.length - 1; i >= 0; i--) {
+    path += `L ${rightPath[i].x} ${rightPath[i].y} `;
   }
 
-  const resolution = params.gridResolution;
-  const processedGrid = grid.map((row) => row.map((cell) => ({ ...cell })));
-
-  // Simple implementation: create circular cutouts at key points
-  const cutoutRadius = (params.negativeSpaceSize / 100) * (resolution / 4);
-
-  for (let i = 0; i < params.negativeSpaceCount; i++) {
-    // Determine cutout position based on letter structure
-    // For now, use simple positions - this will be refined later
-    const positions = [
-      { x: 0.3, y: 0.3 },
-      { x: 0.7, y: 0.3 },
-      { x: 0.5, y: 0.5 },
-      { x: 0.3, y: 0.7 },
-      { x: 0.7, y: 0.7 },
-    ];
-
-    if (i >= positions.length) break;
-
-    const cutoutCenter = positions[i];
-    const centerX = cutoutCenter.x * resolution;
-    const centerY = cutoutCenter.y * resolution;
-
-    for (let y = 0; y < resolution; y++) {
-      for (let x = 0; x < resolution; x++) {
-        const dist = Math.sqrt(
-          Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)
-        );
-
-        if (dist <= cutoutRadius) {
-          processedGrid[y][x].filled = false;
-        }
-      }
-    }
-  }
-
-  return processedGrid;
-}
-
-/**
- * Convert grid cells to SVG path
- */
-export function gridToSVGPath(
-  grid: GridCell[][],
-  params: Parameters
-): string {
-  const resolution = params.gridResolution;
-  const cellSize = CAP_HEIGHT / resolution;
-  const cornerRadius = (params.cornerRadius / 100) * (cellSize / 2);
-  const squareSize = cellSize * params.squareSize;
-  const offset = (cellSize - squareSize) / 2;
-
-  let path = '';
-
-  for (let y = 0; y < resolution; y++) {
-    for (let x = 0; x < resolution; x++) {
-      if (!grid[y][x].filled) continue;
-
-      const px = x * cellSize + offset;
-      const py = y * cellSize + offset;
-
-      if (cornerRadius > 0) {
-        // Rounded rectangle
-        const r = Math.min(cornerRadius, squareSize / 2);
-        path += `M ${px + r} ${py} `;
-        path += `L ${px + squareSize - r} ${py} `;
-        path += `Q ${px + squareSize} ${py} ${px + squareSize} ${py + r} `;
-        path += `L ${px + squareSize} ${py + squareSize - r} `;
-        path += `Q ${px + squareSize} ${py + squareSize} ${px + squareSize - r} ${py + squareSize} `;
-        path += `L ${px + r} ${py + squareSize} `;
-        path += `Q ${px} ${py + squareSize} ${px} ${py + squareSize - r} `;
-        path += `L ${px} ${py + r} `;
-        path += `Q ${px} ${py} ${px + r} ${py} Z `;
-      } else {
-        // Sharp rectangle
-        path += `M ${px} ${py} `;
-        path += `L ${px + squareSize} ${py} `;
-        path += `L ${px + squareSize} ${py + squareSize} `;
-        path += `L ${px} ${py + squareSize} Z `;
-      }
-    }
-  }
+  path += 'Z ';
 
   return path;
 }
 
 /**
- * Generate glyph from letter skeleton
+ * Create straight stroke with width
+ */
+function createStraightStroke(points: Point[], width: number): string {
+  if (points.length < 2) return '';
+
+  const start = points[0];
+  const end = points[points.length - 1];
+
+  // Calculate perpendicular
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  const len = Math.sqrt(dx * dx + dy * dy);
+
+  if (len === 0) return '';
+
+  const perpX = (-dy / len) * (width / 2);
+  const perpY = (dx / len) * (width / 2);
+
+  // Create rectangle
+  return `
+    M ${start.x + perpX} ${start.y + perpY}
+    L ${end.x + perpX} ${end.y + perpY}
+    L ${end.x - perpX} ${end.y - perpY}
+    L ${start.x - perpX} ${start.y - perpY}
+    Z
+  `;
+}
+
+/**
+ * Sample points along an SVG path outline
+ */
+function samplePathOutline(pathData: string, spacing: number): Point[] {
+  // This is a simplified version - in a real implementation,
+  // we'd parse the SVG path and sample it properly
+  // For now, we'll extract key points from the path commands
+
+  const points: Point[] = [];
+  const commands = pathData.match(/[MLQCZmlqcz][^MLQCZmlqcz]*/g) || [];
+
+  let currentX = 0;
+  let currentY = 0;
+
+  for (const cmd of commands) {
+    const type = cmd[0];
+    const coords = cmd.slice(1).trim().split(/[\s,]+/).filter(s => s).map(parseFloat);
+
+    switch (type) {
+      case 'M':
+      case 'L':
+        if (coords.length >= 2) {
+          points.push({ x: coords[0], y: coords[1] });
+          currentX = coords[0];
+          currentY = coords[1];
+        }
+        break;
+      case 'Q':
+        if (coords.length >= 4) {
+          // Add control point and end point
+          points.push({ x: coords[0], y: coords[1] });
+          points.push({ x: coords[2], y: coords[3] });
+          currentX = coords[2];
+          currentY = coords[3];
+        }
+        break;
+    }
+  }
+
+  // Subsample based on spacing
+  if (points.length === 0) return points;
+
+  const subsampledPoints: Point[] = [points[0]];
+  let lastPoint = points[0];
+
+  for (let i = 1; i < points.length; i++) {
+    const p = points[i];
+    const dist = Math.sqrt(
+      Math.pow(p.x - lastPoint.x, 2) + Math.pow(p.y - lastPoint.y, 2)
+    );
+
+    if (dist >= spacing) {
+      subsampledPoints.push(p);
+      lastPoint = p;
+    }
+  }
+
+  return subsampledPoints;
+}
+
+/**
+ * Place edge pixels along the outline
+ */
+export function generateEdgePixels(
+  blobPath: string,
+  params: Parameters
+): string {
+  const pixelSize = params.edgePixelSize;
+  const edgeSpacing = params.edgePixelSpacing;
+  const cornerRadius = (params.cornerRadius / 100) * (pixelSize / 2);
+
+  // Sample points along the blob outline
+  const edgePoints = samplePathOutline(blobPath, edgeSpacing);
+
+  let pixelsPath = '';
+
+  // Place a square at each edge point
+  for (const point of edgePoints) {
+    const x = point.x - pixelSize / 2;
+    const y = point.y - pixelSize / 2;
+
+    if (cornerRadius > 0) {
+      // Rounded square
+      const r = Math.min(cornerRadius, pixelSize / 2);
+      pixelsPath += `
+        M ${x + r} ${y}
+        L ${x + pixelSize - r} ${y}
+        Q ${x + pixelSize} ${y} ${x + pixelSize} ${y + r}
+        L ${x + pixelSize} ${y + pixelSize - r}
+        Q ${x + pixelSize} ${y + pixelSize} ${x + pixelSize - r} ${y + pixelSize}
+        L ${x + r} ${y + pixelSize}
+        Q ${x} ${y + pixelSize} ${x} ${y + pixelSize - r}
+        L ${x} ${y + r}
+        Q ${x} ${y} ${x + r} ${y}
+        Z
+      `;
+    } else {
+      // Sharp square
+      pixelsPath += `
+        M ${x} ${y}
+        L ${x + pixelSize} ${y}
+        L ${x + pixelSize} ${y + pixelSize}
+        L ${x} ${y + pixelSize}
+        Z
+      `;
+    }
+  }
+
+  return pixelsPath;
+}
+
+/**
+ * Generate complete glyph: solid blob + edge pixels
  */
 export function generateGlyph(
   skeleton: LetterSkeleton,
   params: Parameters
 ): { svgPath: string; advanceWidth: number } {
-  // Create grid
-  const grid = createGrid(params.gridResolution);
+  // Generate smooth blob outline
+  const blobPath = generateBlobOutline(skeleton, params);
 
-  // Fill grid from strokes
-  const filledGrid = fillGridFromStrokes(grid, skeleton.strokes, params);
+  // Generate edge pixels
+  const edgePixelsPath = generateEdgePixels(blobPath, params);
 
-  // Apply density effects
-  const densityGrid = applyDensityGradient(filledGrid, params);
+  // Combine: blob fill + edge pixels on top
+  let finalPath = '';
 
-  // Apply negative space
-  const finalGrid = applyNegativeSpace(densityGrid, params, skeleton.strokes);
-
-  // Convert to SVG path
-  const svgPath = gridToSVGPath(finalGrid, params);
+  if (params.fillStyle === 'solid') {
+    // Solid blob with edge pixels
+    finalPath = blobPath + ' ' + edgePixelsPath;
+  } else if (params.fillStyle === 'outline-only') {
+    // Only edge pixels
+    finalPath = edgePixelsPath;
+  } else {
+    // Hollow: blob outline as stroke + edge pixels
+    finalPath = blobPath + ' ' + edgePixelsPath;
+  }
 
   // Calculate advance width
   const baseWidth = UNITS_PER_EM * skeleton.width;
@@ -337,7 +288,7 @@ export function generateGlyph(
   const advanceWidth = baseWidth * widthAdjustment + params.tracking;
 
   return {
-    svgPath,
+    svgPath: finalPath,
     advanceWidth: params.monospace ? UNITS_PER_EM : advanceWidth,
   };
 }

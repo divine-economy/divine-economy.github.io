@@ -34,77 +34,59 @@ export interface GridCell {
 // PARAMETERS
 // ============================================================================
 
-export type DensityGradient = 'none' | 'center' | 'edge' | 'random';
+export type FillStyle = 'solid' | 'outline-only' | 'hollow';
 export type OrganicTemplate = 'blob' | 'branch' | 'hybrid';
 
 export interface Parameters {
-  // Grid Structure
-  gridResolution: number;      // 10-32
-  squareSize: number;          // 0.6-1.0
-  cornerRadius: number;        // 0-50
+  // Edge Pixels
+  edgePixelSize: number;       // 10-80 - Size of pixels on the outline
+  edgePixelSpacing: number;    // 20-150 - Space between edge pixels
+  cornerRadius: number;        // 0-50 - Roundness of edge pixels
 
-  // Organic Flow
-  blobSmoothness: number;      // 0-100
-  flowStrength: number;        // 0-100
-  curveTension: number;        // 0.2-1.0
-  branchThickness: number;     // 0.5-2.5
+  // Blob Shape
+  blobThickness: number;       // 50-200 - Thickness of organic strokes
+  blobSmoothness: number;      // 0-100 - How smooth/curvy the blobs are
+  curveTension: number;        // 0.2-1.0 - Tightness of curves
 
   // Form & Structure
   organicTemplate: OrganicTemplate;
-  negativeSpaceSize: number;   // 0-50
-  negativeSpaceCount: number;  // 0-5
+  fillStyle: FillStyle;        // solid, outline-only, or hollow
   symmetryStrength: number;    // 0-100
-
-  // Density & Distribution
-  fillDensity: number;         // 50-100
-  densityGradient: DensityGradient;
-  scatterNoise: number;        // 0-40
 
   // Typography Metrics
   width: number;               // 60-140
-  weight: number;              // 50-200
   tracking: number;            // -100-300
   monospace: boolean;
 
   // Advanced Tweaks
-  overshoot: number;           // 0-5
-  junctionMerge: number;       // 0-100
-  outerGlow: number;           // 0-3
+  flowStrength: number;        // 0-100 - Organic undulation
+  branchThickness: number;     // 0.5-2.5 - Width at junctions
 }
 
 export const DEFAULT_PARAMETERS: Parameters = {
-  // Grid Structure
-  gridResolution: 20,
-  squareSize: 0.9,
-  cornerRadius: 15,
+  // Edge Pixels
+  edgePixelSize: 30,
+  edgePixelSpacing: 50,
+  cornerRadius: 20,
 
-  // Organic Flow
-  blobSmoothness: 65,
-  flowStrength: 70,
+  // Blob Shape
+  blobThickness: 120,
+  blobSmoothness: 70,
   curveTension: 0.6,
-  branchThickness: 1.2,
 
   // Form & Structure
   organicTemplate: 'blob',
-  negativeSpaceSize: 25,
-  negativeSpaceCount: 2,
-  symmetryStrength: 40,
-
-  // Density & Distribution
-  fillDensity: 85,
-  densityGradient: 'center',
-  scatterNoise: 10,
+  fillStyle: 'solid',
+  symmetryStrength: 30,
 
   // Typography Metrics
   width: 100,
-  weight: 100,
   tracking: 0,
   monospace: false,
 
   // Advanced Tweaks
-  overshoot: 2,
-  junctionMerge: 60,
-  outerGlow: 0,
+  flowStrength: 60,
+  branchThickness: 1.2,
 };
 
 // ============================================================================
@@ -119,81 +101,72 @@ export interface Preset {
 
 export const PRESETS: Preset[] = [
   {
-    name: 'Dense Organic',
-    description: 'Tight grid with strong organic flow',
+    name: 'Smooth Blob',
+    description: 'Organic shapes with tiny edge pixels',
     parameters: {
       ...DEFAULT_PARAMETERS,
-      gridResolution: 24,
-      squareSize: 0.95,
-      cornerRadius: 20,
-      blobSmoothness: 80,
-      flowStrength: 85,
-      fillDensity: 95,
-      negativeSpaceSize: 15,
-    },
-  },
-  {
-    name: 'Sparse Retro',
-    description: 'Low-res pixelated with minimal smoothing',
-    parameters: {
-      ...DEFAULT_PARAMETERS,
-      gridResolution: 12,
-      squareSize: 0.85,
-      cornerRadius: 5,
-      blobSmoothness: 30,
-      flowStrength: 40,
-      fillDensity: 70,
-      scatterNoise: 20,
-      negativeSpaceSize: 35,
-    },
-  },
-  {
-    name: 'Heavy Flow',
-    description: 'Maximum organic curves with thick branches',
-    parameters: {
-      ...DEFAULT_PARAMETERS,
-      gridResolution: 20,
-      squareSize: 0.92,
-      cornerRadius: 25,
+      edgePixelSize: 20,
+      edgePixelSpacing: 40,
+      cornerRadius: 30,
+      blobThickness: 150,
       blobSmoothness: 90,
-      flowStrength: 95,
+      flowStrength: 80,
+    },
+  },
+  {
+    name: 'Chunky Retro',
+    description: 'Large pixels with bold blobs',
+    parameters: {
+      ...DEFAULT_PARAMETERS,
+      edgePixelSize: 60,
+      edgePixelSpacing: 80,
+      cornerRadius: 10,
+      blobThickness: 180,
+      blobSmoothness: 50,
+      flowStrength: 40,
+    },
+  },
+  {
+    name: 'Delicate Flow',
+    description: 'Thin strokes with small detailed pixels',
+    parameters: {
+      ...DEFAULT_PARAMETERS,
+      edgePixelSize: 15,
+      edgePixelSpacing: 30,
+      cornerRadius: 25,
+      blobThickness: 80,
+      blobSmoothness: 95,
       curveTension: 0.8,
-      branchThickness: 2.0,
-      fillDensity: 88,
-      negativeSpaceSize: 20,
-      negativeSpaceCount: 3,
+      flowStrength: 90,
+      branchThickness: 0.8,
     },
   },
   {
-    name: 'Geometric Blob',
-    description: 'Balanced organic shapes with clear structure',
+    name: 'Geometric Balance',
+    description: 'Medium pixels with structured blobs',
     parameters: {
       ...DEFAULT_PARAMETERS,
-      gridResolution: 18,
-      squareSize: 0.88,
-      cornerRadius: 12,
+      edgePixelSize: 35,
+      edgePixelSpacing: 60,
+      cornerRadius: 15,
+      blobThickness: 120,
       blobSmoothness: 60,
-      flowStrength: 65,
-      fillDensity: 82,
-      symmetryStrength: 60,
-      negativeSpaceSize: 28,
+      symmetryStrength: 70,
+      flowStrength: 50,
     },
   },
   {
-    name: 'Scattered Pixels',
-    description: 'High noise with organic undertones',
+    name: 'Outline Only',
+    description: 'Hollow letters with pixel edges',
     parameters: {
       ...DEFAULT_PARAMETERS,
-      gridResolution: 16,
-      squareSize: 0.75,
-      cornerRadius: 8,
-      blobSmoothness: 45,
-      flowStrength: 50,
-      fillDensity: 65,
-      densityGradient: 'random',
-      scatterNoise: 35,
-      negativeSpaceSize: 40,
-      negativeSpaceCount: 1,
+      edgePixelSize: 25,
+      edgePixelSpacing: 45,
+      cornerRadius: 20,
+      blobThickness: 100,
+      blobSmoothness: 75,
+      fillStyle: 'outline-only',
+      flowStrength: 65,
     },
   },
 ];

@@ -67,16 +67,12 @@ export default function ParameterPanel() {
     const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
 
     setParameters({
-      gridResolution: Math.round(randomInRange(12, 28)),
-      squareSize: randomInRange(0.7, 0.95),
-      cornerRadius: Math.round(randomInRange(0, 40)),
-      blobSmoothness: Math.round(randomInRange(30, 95)),
-      flowStrength: Math.round(randomInRange(40, 95)),
-      curveTension: randomInRange(0.3, 0.9),
-      branchThickness: randomInRange(0.7, 2.2),
-      fillDensity: Math.round(randomInRange(60, 95)),
-      scatterNoise: Math.round(randomInRange(5, 35)),
-      negativeSpaceSize: Math.round(randomInRange(10, 45)),
+      edgePixelSize: Math.round(randomInRange(15, 70)),
+      edgePixelSpacing: Math.round(randomInRange(30, 120)),
+      cornerRadius: Math.round(randomInRange(0, 45)),
+      blobThickness: Math.round(randomInRange(70, 180)),
+      blobSmoothness: Math.round(randomInRange(40, 95)),
+      flowStrength: Math.round(randomInRange(30, 90)),
     });
   };
 
@@ -119,24 +115,23 @@ export default function ParameterPanel() {
 
       {/* Parameter Sections */}
       <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
-        {/* Grid Structure */}
-        <Section title="Grid Structure">
+        {/* Edge Pixels */}
+        <Section title="Edge Pixels">
           <ParameterSlider
-            label="Resolution"
-            value={parameters.gridResolution}
-            onChange={(v) => setParameter('gridResolution', Math.round(v))}
+            label="Pixel Size"
+            value={parameters.edgePixelSize}
+            onChange={(v) => setParameter('edgePixelSize', Math.round(v))}
             min={10}
-            max={32}
+            max={80}
             step={1}
           />
           <ParameterSlider
-            label="Square Size"
-            value={parameters.squareSize * 100}
-            onChange={(v) => setParameter('squareSize', v / 100)}
-            min={60}
-            max={100}
-            step={1}
-            unit="%"
+            label="Pixel Spacing"
+            value={parameters.edgePixelSpacing}
+            onChange={(v) => setParameter('edgePixelSpacing', Math.round(v))}
+            min={20}
+            max={150}
+            step={5}
           />
           <ParameterSlider
             label="Corner Radius"
@@ -149,20 +144,20 @@ export default function ParameterPanel() {
           />
         </Section>
 
-        {/* Organic Flow */}
-        <Section title="Organic Flow">
+        {/* Blob Shape */}
+        <Section title="Blob Shape">
           <ParameterSlider
-            label="Blob Smoothness"
-            value={parameters.blobSmoothness}
-            onChange={(v) => setParameter('blobSmoothness', Math.round(v))}
-            min={0}
-            max={100}
-            step={1}
+            label="Blob Thickness"
+            value={parameters.blobThickness}
+            onChange={(v) => setParameter('blobThickness', Math.round(v))}
+            min={50}
+            max={200}
+            step={5}
           />
           <ParameterSlider
-            label="Flow Strength"
-            value={parameters.flowStrength}
-            onChange={(v) => setParameter('flowStrength', Math.round(v))}
+            label="Smoothness"
+            value={parameters.blobSmoothness}
+            onChange={(v) => setParameter('blobSmoothness', Math.round(v))}
             min={0}
             max={100}
             step={1}
@@ -173,15 +168,7 @@ export default function ParameterPanel() {
             onChange={(v) => setParameter('curveTension', v / 100)}
             min={20}
             max={100}
-            step={1}
-          />
-          <ParameterSlider
-            label="Branch Thickness"
-            value={parameters.branchThickness * 10}
-            onChange={(v) => setParameter('branchThickness', v / 10)}
-            min={5}
-            max={25}
-            step={1}
+            step={5}
           />
         </Section>
 
@@ -199,68 +186,29 @@ export default function ParameterPanel() {
               <option value="hybrid">Hybrid</option>
             </select>
           </div>
-          <ParameterSlider
-            label="Negative Space"
-            value={parameters.negativeSpaceSize}
-            onChange={(v) => setParameter('negativeSpaceSize', Math.round(v))}
-            min={0}
-            max={50}
-            step={1}
-            unit="%"
-          />
-          <ParameterSlider
-            label="Cutout Count"
-            value={parameters.negativeSpaceCount}
-            onChange={(v) => setParameter('negativeSpaceCount', Math.round(v))}
-            min={0}
-            max={5}
-            step={1}
-          />
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-300">Fill Style</label>
+            <select
+              value={parameters.fillStyle}
+              onChange={(e) => setParameter('fillStyle', e.target.value as any)}
+              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm"
+            >
+              <option value="solid">Solid</option>
+              <option value="outline-only">Outline Only</option>
+              <option value="hollow">Hollow</option>
+            </select>
+          </div>
           <ParameterSlider
             label="Symmetry"
             value={parameters.symmetryStrength}
             onChange={(v) => setParameter('symmetryStrength', Math.round(v))}
             min={0}
             max={100}
-            step={1}
+            step={5}
           />
         </Section>
 
-        {/* Density & Distribution */}
-        <Section title="Density">
-          <ParameterSlider
-            label="Fill Density"
-            value={parameters.fillDensity}
-            onChange={(v) => setParameter('fillDensity', Math.round(v))}
-            min={50}
-            max={100}
-            step={1}
-            unit="%"
-          />
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Gradient</label>
-            <select
-              value={parameters.densityGradient}
-              onChange={(e) => setParameter('densityGradient', e.target.value as any)}
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm"
-            >
-              <option value="none">None</option>
-              <option value="center">Center</option>
-              <option value="edge">Edge</option>
-              <option value="random">Random</option>
-            </select>
-          </div>
-          <ParameterSlider
-            label="Scatter Noise"
-            value={parameters.scatterNoise}
-            onChange={(v) => setParameter('scatterNoise', Math.round(v))}
-            min={0}
-            max={40}
-            step={1}
-          />
-        </Section>
-
-        {/* Typography Metrics */}
+        {/* Typography */}
         <Section title="Typography">
           <ParameterSlider
             label="Width"
@@ -268,16 +216,7 @@ export default function ParameterPanel() {
             onChange={(v) => setParameter('width', Math.round(v))}
             min={60}
             max={140}
-            step={1}
-            unit="%"
-          />
-          <ParameterSlider
-            label="Weight"
-            value={parameters.weight}
-            onChange={(v) => setParameter('weight', Math.round(v))}
-            min={50}
-            max={200}
-            step={1}
+            step={5}
             unit="%"
           />
           <ParameterSlider
@@ -302,28 +241,19 @@ export default function ParameterPanel() {
         {/* Advanced */}
         <Section title="Advanced" defaultOpen={false}>
           <ParameterSlider
-            label="Overshoot"
-            value={parameters.overshoot}
-            onChange={(v) => setParameter('overshoot', Math.round(v))}
-            min={0}
-            max={5}
-            step={1}
-            unit="%"
-          />
-          <ParameterSlider
-            label="Junction Merge"
-            value={parameters.junctionMerge}
-            onChange={(v) => setParameter('junctionMerge', Math.round(v))}
+            label="Flow Strength"
+            value={parameters.flowStrength}
+            onChange={(v) => setParameter('flowStrength', Math.round(v))}
             min={0}
             max={100}
-            step={1}
+            step={5}
           />
           <ParameterSlider
-            label="Outer Glow"
-            value={parameters.outerGlow}
-            onChange={(v) => setParameter('outerGlow', Math.round(v))}
-            min={0}
-            max={3}
+            label="Branch Thickness"
+            value={parameters.branchThickness * 10}
+            onChange={(v) => setParameter('branchThickness', v / 10)}
+            min={5}
+            max={25}
             step={1}
           />
         </Section>
