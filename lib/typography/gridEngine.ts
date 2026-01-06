@@ -140,19 +140,29 @@ export function generateGlyph(
   skeleton: LetterSkeleton,
   params: Parameters
 ): { svgPath: string; advanceWidth: number } {
-  // Generate filled blob
-  const blobPath = generateFilledBlob(skeleton, params);
+  try {
+    // Generate filled blob
+    const blobPath = generateFilledBlob(skeleton, params);
 
-  // For now, just return the blob without edge pixels
-  // Once this works consistently, we can add edge decoration
-  const finalPath = blobPath;
+    console.log('Generated blob path for letter:', blobPath.substring(0, 100) + '...');
 
-  // Calculate advance width
-  const baseWidth = UNITS_PER_EM * skeleton.width * (params.width / 100);
-  const advanceWidth = baseWidth + params.tracking;
+    // For now, just return the blob without edge pixels
+    // Once this works consistently, we can add edge decoration
+    const finalPath = blobPath;
 
-  return {
-    svgPath: finalPath,
-    advanceWidth: params.monospace ? UNITS_PER_EM : advanceWidth,
-  };
+    // Calculate advance width
+    const baseWidth = UNITS_PER_EM * skeleton.width * (params.width / 100);
+    const advanceWidth = baseWidth + params.tracking;
+
+    return {
+      svgPath: finalPath,
+      advanceWidth: params.monospace ? UNITS_PER_EM : advanceWidth,
+    };
+  } catch (error) {
+    console.error('Error in generateGlyph:', error);
+    return {
+      svgPath: '',
+      advanceWidth: UNITS_PER_EM,
+    };
+  }
 }
