@@ -69,7 +69,7 @@ export default function ParameterPanel() {
     setParameters({
       blobThickness: Math.round(randomInRange(60, 140)),
       blobSmoothness: Math.round(randomInRange(40, 95)),
-      pixelSize: Math.round(randomInRange(8, 30)),
+      gridSpacing: Math.round(randomInRange(8, 30)),
       gridLineWidth: randomInRange(1, 4),
       gridLineLightness: Math.round(randomInRange(15, 45)),
       width: parameters.width,
@@ -138,12 +138,12 @@ export default function ParameterPanel() {
           />
         </Section>
 
-        {/* Pixel Grid */}
-        <Section title="Pixel Grid">
+        {/* Grid Overlay */}
+        <Section title="Grid Overlay">
           <ParameterSlider
-            label="Pixel Size"
-            value={parameters.pixelSize}
-            onChange={(v) => setParameter('pixelSize', Math.round(v))}
+            label="Grid Spacing"
+            value={parameters.gridSpacing}
+            onChange={(v) => setParameter('gridSpacing', Math.round(v))}
             min={5}
             max={40}
             step={1}

@@ -81,6 +81,9 @@ export function previewLetter(
   const colorValue = Math.round((params.gridLineLightness / 100) * 255);
   const gridColor = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
 
+  // Generate unique ID for clip path
+  const clipId = `clip-${character}-${Math.random().toString(36).substr(2, 9)}`;
+
   return `
     <svg
       width="${size}"
@@ -88,6 +91,11 @@ export function previewLetter(
       viewBox="0 0 ${viewBoxSize} ${viewBoxSize}"
       xmlns="http://www.w3.org/2000/svg"
     >
+      <defs>
+        <clipPath id="${clipId}">
+          <path d="${glyph.svgPath}" transform="${translate}" />
+        </clipPath>
+      </defs>
       <path
         d="${glyph.svgPath}"
         fill="currentColor"
@@ -99,6 +107,7 @@ export function previewLetter(
         stroke="${gridColor}"
         stroke-width="${params.gridLineWidth}"
         transform="${translate}"
+        clip-path="url(#${clipId})"
       />
     </svg>
   `;
@@ -136,14 +145,23 @@ export function previewText(
   const colorValue = Math.round((params.gridLineLightness / 100) * 255);
   const gridColor = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
 
-  let pixelPaths = '';
+  let clipPaths = '';
+  let blobPaths = '';
   let gridPaths = '';
   let xOffset = 0;
 
-  for (const glyph of glyphs) {
+  for (let i = 0; i < glyphs.length; i++) {
+    const glyph = glyphs[i];
     const transform = `translate(${xOffset}, 0) scale(${scale})`;
+    const clipId = `clip-text-${i}-${Math.random().toString(36).substr(2, 9)}`;
 
-    pixelPaths += `
+    clipPaths += `
+      <clipPath id="${clipId}">
+        <path d="${glyph.svgPath}" transform="${transform}" />
+      </clipPath>
+    `;
+
+    blobPaths += `
       <path
         d="${glyph.svgPath}"
         fill="currentColor"
@@ -158,6 +176,7 @@ export function previewText(
         stroke="${gridColor}"
         stroke-width="${params.gridLineWidth}"
         transform="${transform}"
+        clip-path="url(#${clipId})"
       />
     `;
 
@@ -171,7 +190,10 @@ export function previewText(
       viewBox="0 0 ${width} ${height}"
       xmlns="http://www.w3.org/2000/svg"
     >
-      ${pixelPaths}
+      <defs>
+        ${clipPaths}
+      </defs>
+      ${blobPaths}
       ${gridPaths}
     </svg>
   `;

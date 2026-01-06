@@ -1,6 +1,6 @@
 /**
- * Blob-Based Generation Engine with Pixel Grid Overlay
- * Creates organic letterforms that appear to be made of visible pixels
+ * Blob-Based Generation Engine with Grid Overlay
+ * Creates smooth organic letterforms with a grid pattern inside
  */
 
 import { Parameters, Point, Stroke, LetterSkeleton } from './types';
@@ -9,24 +9,21 @@ export const UNITS_PER_EM = 1000;
 export const CAP_HEIGHT = 700;
 
 /**
- * Generate organic blob shapes with pixel grid overlay
+ * Generate smooth organic blob shapes with grid overlay
  */
 export function generateGlyph(
   skeleton: LetterSkeleton,
   params: Parameters
 ): { svgPath: string; gridPath: string; advanceWidth: number } {
   try {
-    // Step 1: Generate smooth blob shape
-    const blobPath = generateBlobShape(skeleton, params);
+    // Step 1: Generate smooth blob shape (this is the letter itself)
+    const svgPath = generateBlobShape(skeleton, params);
 
-    // Step 2: Rasterize blob into pixel grid
-    const pixels = rasterizeBlobToGrid(blobPath, params.pixelSize);
+    // Step 2: Get bounds of the blob for grid generation
+    const bounds = getPathBounds(svgPath);
 
-    // Step 3: Draw pixels (solid black)
-    const svgPath = drawPixels(pixels, params.pixelSize);
-
-    // Step 4: Generate grid lines
-    const gridPath = drawGridLines(pixels, params);
+    // Step 3: Generate grid lines that cover the blob area
+    const gridPath = generateGridPattern(bounds, params.gridSpacing);
 
     // Calculate advance width
     const baseWidth = UNITS_PER_EM * skeleton.width * (params.width / 100);
@@ -48,7 +45,7 @@ export function generateGlyph(
 }
 
 /**
- * Step 1: Generate smooth organic blob shape
+ * Generate smooth organic blob shape
  */
 function generateBlobShape(skeleton: LetterSkeleton, params: Parameters): string {
   let pathData = '';
@@ -78,105 +75,29 @@ function generateBlobShape(skeleton: LetterSkeleton, params: Parameters): string
 }
 
 /**
- * Step 2: Rasterize blob shape into a pixel grid
- * Returns array of pixel coordinates that are "on"
+ * Generate a regular grid pattern (horizontal and vertical lines)
  */
-function rasterizeBlobToGrid(blobPath: string, pixelSize: number): Point[] {
-  // Parse the SVG path to get bounds and sample points
-  const bounds = getPathBounds(blobPath);
-
-  const pixels: Point[] = [];
-
-  // Sample grid cells to see which ones intersect the blob
-  const gridStartX = Math.floor(bounds.minX / pixelSize) * pixelSize;
-  const gridStartY = Math.floor(bounds.minY / pixelSize) * pixelSize;
-  const gridEndX = Math.ceil(bounds.maxX / pixelSize) * pixelSize;
-  const gridEndY = Math.ceil(bounds.maxY / pixelSize) * pixelSize;
-
-  for (let x = gridStartX; x < gridEndX; x += pixelSize) {
-    for (let y = gridStartY; y < gridEndY; y += pixelSize) {
-      // Check if this pixel cell intersects with the blob
-      // We'll use a simple approach: check the center point
-      const centerX = x + pixelSize / 2;
-      const centerY = y + pixelSize / 2;
-
-      if (isPointInPath(centerX, centerY, blobPath)) {
-        pixels.push({ x, y });
-      }
-    }
-  }
-
-  return pixels;
-}
-
-/**
- * Step 3: Draw solid black pixels
- */
-function drawPixels(pixels: Point[], pixelSize: number): string {
+function generateGridPattern(
+  bounds: { minX: number; minY: number; maxX: number; maxY: number },
+  gridSpacing: number
+): string {
   let path = '';
 
-  for (const pixel of pixels) {
-    path += `M ${pixel.x} ${pixel.y} `;
-    path += `L ${pixel.x + pixelSize} ${pixel.y} `;
-    path += `L ${pixel.x + pixelSize} ${pixel.y + pixelSize} `;
-    path += `L ${pixel.x} ${pixel.y + pixelSize} `;
-    path += `Z `;
+  // Add some padding to ensure grid covers the entire shape
+  const padding = gridSpacing;
+  const startX = Math.floor(bounds.minX / gridSpacing) * gridSpacing - padding;
+  const startY = Math.floor(bounds.minY / gridSpacing) * gridSpacing - padding;
+  const endX = Math.ceil(bounds.maxX / gridSpacing) * gridSpacing + padding;
+  const endY = Math.ceil(bounds.maxY / gridSpacing) * gridSpacing + padding;
+
+  // Vertical lines
+  for (let x = startX; x <= endX; x += gridSpacing) {
+    path += `M ${x} ${startY} L ${x} ${endY} `;
   }
 
-  return path;
-}
-
-/**
- * Step 4: Draw grid lines between pixels
- * Only draws lines where there are adjacent pixels
- */
-function drawGridLines(pixels: Point[], params: Parameters): string {
-  const { pixelSize, gridLineWidth } = params;
-  const lines = new Set<string>();
-
-  // Create a lookup set for quick pixel existence checks
-  const pixelSet = new Set(pixels.map(p => `${p.x},${p.y}`));
-
-  for (const pixel of pixels) {
-    // Check for adjacent pixels and draw grid lines between them
-    const x = pixel.x;
-    const y = pixel.y;
-
-    // Right edge - draw vertical line if there's a pixel to the right
-    const rightKey = `${x + pixelSize},${y}`;
-    if (pixelSet.has(rightKey)) {
-      const lineKey = `V|${x + pixelSize}|${y}|${y + pixelSize}`;
-      lines.add(lineKey);
-    }
-
-    // Bottom edge - draw horizontal line if there's a pixel below
-    const bottomKey = `${x},${y + pixelSize}`;
-    if (pixelSet.has(bottomKey)) {
-      const lineKey = `H|${y + pixelSize}|${x}|${x + pixelSize}`;
-      lines.add(lineKey);
-    }
-
-    // Always draw bottom and right edges as they're part of the pixel boundary
-    // This creates the grid effect on the edges of the letter
-  }
-
-  // Convert line descriptors to SVG path
-  let path = '';
-  for (const lineDesc of lines) {
-    const parts = lineDesc.split('|');
-    if (parts[0] === 'V') {
-      // Vertical line
-      const x = parseFloat(parts[1]);
-      const y1 = parseFloat(parts[2]);
-      const y2 = parseFloat(parts[3]);
-      path += `M ${x} ${y1} L ${x} ${y2} `;
-    } else {
-      // Horizontal line
-      const y = parseFloat(parts[1]);
-      const x1 = parseFloat(parts[2]);
-      const x2 = parseFloat(parts[3]);
-      path += `M ${x1} ${y} L ${x2} ${y} `;
-    }
+  // Horizontal lines
+  for (let y = startY; y <= endY; y += gridSpacing) {
+    path += `M ${startX} ${y} L ${endX} ${y} `;
   }
 
   return path;
@@ -210,54 +131,7 @@ function getPathBounds(pathData: string): { minX: number; minY: number; maxX: nu
 }
 
 /**
- * Check if a point is inside an SVG path
- * Uses ray casting algorithm
- */
-function isPointInPath(px: number, py: number, pathData: string): boolean {
-  // Extract all points from the path
-  const points = extractPathPoints(pathData);
-
-  if (points.length === 0) return false;
-
-  // Ray casting algorithm
-  let inside = false;
-  for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
-    const xi = points[i].x;
-    const yi = points[i].y;
-    const xj = points[j].x;
-    const yj = points[j].y;
-
-    const intersect = ((yi > py) !== (yj > py)) &&
-                      (px < (xj - xi) * (py - yi) / (yj - yi) + xi);
-    if (intersect) inside = !inside;
-  }
-
-  return inside;
-}
-
-/**
- * Extract coordinate points from SVG path data
- */
-function extractPathPoints(pathData: string): Point[] {
-  const points: Point[] = [];
-  const numbers = pathData.match(/[-+]?[0-9]*\.?[0-9]+/g);
-
-  if (!numbers) return points;
-
-  for (let i = 0; i < numbers.length; i += 2) {
-    if (i + 1 < numbers.length) {
-      points.push({
-        x: parseFloat(numbers[i]),
-        y: parseFloat(numbers[i + 1]),
-      });
-    }
-  }
-
-  return points;
-}
-
-/**
- * Create a blob-like path
+ * Create a blob-like path with smooth curves
  */
 function createBlobPath(points: Point[], thickness: number, curved: boolean, smoothness: number): string {
   if (points.length < 2) return '';
@@ -378,19 +252,5 @@ function getPerpendicular(points: Point[], index: number): Point {
   return {
     x: -dy / length,
     y: dx / length,
-  };
-}
-
-/**
- * Export pixel data with grid styling for rendering
- */
-export function getGridStyleData(params: Parameters): {
-  gridLineWidth: number;
-  gridLineColor: string;
-} {
-  const colorValue = Math.round((params.gridLineLightness / 100) * 255);
-  return {
-    gridLineWidth: params.gridLineWidth,
-    gridLineColor: `rgb(${colorValue}, ${colorValue}, ${colorValue})`,
   };
 }

@@ -39,9 +39,9 @@ export interface Parameters {
   blobThickness: number;       // 30-150 - Thickness of organic strokes
   blobSmoothness: number;      // 0-100 - How smooth/curvy the blobs are
 
-  // Pixel Grid Overlay
-  pixelSize: number;           // 5-40 - Size of each pixel square
-  gridLineWidth: number;       // 0.5-5 - Thickness of grid lines between pixels
+  // Grid Overlay
+  gridSpacing: number;         // 5-40 - Spacing between grid lines
+  gridLineWidth: number;       // 0.5-5 - Thickness of grid lines
   gridLineLightness: number;   // 0-100 - Grid line color (0=black, 100=white)
 
   // Typography Metrics
@@ -55,8 +55,8 @@ export const DEFAULT_PARAMETERS: Parameters = {
   blobThickness: 100,
   blobSmoothness: 70,
 
-  // Pixel Grid Overlay
-  pixelSize: 15,
+  // Grid Overlay
+  gridSpacing: 15,
   gridLineWidth: 2,
   gridLineLightness: 30,
 
@@ -79,17 +79,17 @@ export interface Preset {
 export const PRESETS: Preset[] = [
   {
     name: 'Default',
-    description: 'Balanced organic blobs with visible pixel grid',
+    description: 'Balanced organic blobs with visible grid',
     parameters: {
       ...DEFAULT_PARAMETERS,
     },
   },
   {
     name: 'Fine Grid',
-    description: 'Small pixels with subtle grid lines',
+    description: 'Small grid spacing with subtle lines',
     parameters: {
       ...DEFAULT_PARAMETERS,
-      pixelSize: 8,
+      gridSpacing: 8,
       gridLineWidth: 1,
       gridLineLightness: 40,
       blobThickness: 90,
@@ -97,11 +97,11 @@ export const PRESETS: Preset[] = [
     },
   },
   {
-    name: 'Chunky Retro',
-    description: 'Large pixels with bold grid',
+    name: 'Chunky',
+    description: 'Wide grid spacing with bold lines',
     parameters: {
       ...DEFAULT_PARAMETERS,
-      pixelSize: 25,
+      gridSpacing: 25,
       gridLineWidth: 3,
       gridLineLightness: 20,
       blobThickness: 130,
@@ -113,7 +113,7 @@ export const PRESETS: Preset[] = [
     description: 'Very curvy blobs with fine mesh',
     parameters: {
       ...DEFAULT_PARAMETERS,
-      pixelSize: 10,
+      gridSpacing: 10,
       gridLineWidth: 1.5,
       gridLineLightness: 35,
       blobThickness: 85,
@@ -125,7 +125,7 @@ export const PRESETS: Preset[] = [
     description: 'Thick blobs with prominent grid',
     parameters: {
       ...DEFAULT_PARAMETERS,
-      pixelSize: 18,
+      gridSpacing: 18,
       gridLineWidth: 4,
       gridLineLightness: 15,
       blobThickness: 140,
