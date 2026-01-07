@@ -18,12 +18,15 @@ export function generateGlyph(
   try {
     // Step 1: Generate smooth blob shape (this is the letter itself)
     const svgPath = generateBlobShape(skeleton, params);
+    console.log('Generated blob path:', svgPath.substring(0, 100) + '...');
 
     // Step 2: Get bounds of the blob for grid generation
     const bounds = getPathBounds(svgPath);
+    console.log('Blob bounds:', bounds);
 
     // Step 3: Generate grid lines that cover the blob area
     const gridPath = generateGridPattern(bounds, params.gridSpacing);
+    console.log('Generated grid path:', gridPath.substring(0, 100) + '...');
 
     // Calculate advance width
     const baseWidth = UNITS_PER_EM * skeleton.width * (params.width / 100);
