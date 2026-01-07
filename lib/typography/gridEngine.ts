@@ -16,20 +16,14 @@ export function generateGlyph(
   params: Parameters
 ): { svgPath: string; gridPath: string; advanceWidth: number } {
   try {
-    console.error('=== GRIDENGINE RUNNING ===');
-    console.error('Parameters:', params);
-
     // Step 1: Generate smooth blob shape (this is the letter itself)
     const svgPath = generateBlobShape(skeleton, params);
-    console.log('Generated blob path:', svgPath.substring(0, 100) + '...');
 
     // Step 2: Get bounds of the blob for grid generation
     const bounds = getPathBounds(svgPath);
-    console.log('Blob bounds:', bounds);
 
-    // Step 3: Generate grid lines that cover the blob area
+    // Step 3: Generate grid lines that cover the entire blob area
     const gridPath = generateGridPattern(bounds, params.gridSpacing);
-    console.log('Generated grid path:', gridPath.substring(0, 100) + '...');
 
     // Calculate advance width
     const baseWidth = UNITS_PER_EM * skeleton.width * (params.width / 100);
@@ -51,11 +45,12 @@ export function generateGlyph(
 }
 
 /**
- * Generate smooth organic blob shape
+ * Generate smooth organic blob shape from skeleton
  */
 function generateBlobShape(skeleton: LetterSkeleton, params: Parameters): string {
   let pathData = '';
   const baseThickness = params.blobThickness;
+  const smoothness = params.blobSmoothness / 100; // 0 to 1
 
   for (const stroke of skeleton.strokes) {
     const points = stroke.points;
@@ -67,17 +62,169 @@ function generateBlobShape(skeleton: LetterSkeleton, params: Parameters): string
       y: p.y * CAP_HEIGHT,
     }));
 
-    // Create blob shape with consistent thickness
     const thickness = baseThickness;
+    const curved = stroke.type === 'curve' || stroke.type === 'blob';
 
-    if (stroke.type === 'curve' || stroke.type === 'blob') {
-      pathData += createBlobPath(scaledPoints, thickness, true, params.blobSmoothness);
-    } else {
-      pathData += createBlobPath(scaledPoints, thickness, false, params.blobSmoothness);
-    }
+    // Create smooth blob path with rounded caps
+    pathData += createSmoothBlobStroke(scaledPoints, thickness, curved, smoothness);
   }
 
   return pathData;
+}
+
+/**
+ * Create a smooth blob stroke with rounded caps
+ */
+function createSmoothBlobStroke(
+  points: Point[],
+  thickness: number,
+  curved: boolean,
+  smoothness: number
+): string {
+  if (points.length < 2) return '';
+
+  const halfThickness = thickness / 2;
+
+  // For a single line segment, create a rounded capsule shape
+  if (points.length === 2) {
+    return createRoundedCapsule(points[0], points[1], thickness, smoothness);
+  }
+
+  // For multi-point paths, create offset curves with rounded joins
+  const leftSide: Point[] = [];
+  const rightSide: Point[] = [];
+
+  // Generate offset points on both sides
+  for (let i = 0; i < points.length; i++) {
+    const curr = points[i];
+    const perpendicular = getPerpendicular(points, i);
+
+    leftSide.push({
+      x: curr.x + perpendicular.x * halfThickness,
+      y: curr.y + perpendicular.y * halfThickness,
+    });
+
+    rightSide.push({
+      x: curr.x - perpendicular.x * halfThickness,
+      y: curr.y - perpendicular.y * halfThickness,
+    });
+  }
+
+  // Build the path with smooth curves
+  let path = '';
+
+  // Start with a rounded cap at the beginning
+  path += createRoundedCap(
+    leftSide[0],
+    rightSide[0],
+    points[0],
+    thickness,
+    true // start cap
+  );
+
+  // Draw left side
+  for (let i = 1; i < leftSide.length; i++) {
+    if (curved && smoothness > 0.3) {
+      // Use smooth quadratic curves
+      const prev = leftSide[i - 1];
+      const curr = leftSide[i];
+      const controlPoint = {
+        x: prev.x + (curr.x - prev.x) * 0.5,
+        y: prev.y + (curr.y - prev.y) * 0.5,
+      };
+      path += `Q ${controlPoint.x} ${controlPoint.y} ${curr.x} ${curr.y} `;
+    } else {
+      path += `L ${leftSide[i].x} ${leftSide[i].y} `;
+    }
+  }
+
+  // Rounded cap at the end
+  path += createRoundedCap(
+    leftSide[leftSide.length - 1],
+    rightSide[rightSide.length - 1],
+    points[points.length - 1],
+    thickness,
+    false // end cap
+  );
+
+  // Draw right side back
+  for (let i = rightSide.length - 2; i >= 0; i--) {
+    if (curved && smoothness > 0.3) {
+      const curr = rightSide[i];
+      const next = rightSide[i + 1];
+      const controlPoint = {
+        x: next.x + (curr.x - next.x) * 0.5,
+        y: next.y + (curr.y - next.y) * 0.5,
+      };
+      path += `Q ${controlPoint.x} ${controlPoint.y} ${curr.x} ${curr.y} `;
+    } else {
+      path += `L ${rightSide[i].x} ${rightSide[i].y} `;
+    }
+  }
+
+  path += 'Z';
+  return path;
+}
+
+/**
+ * Create a rounded capsule (pill shape) between two points
+ */
+function createRoundedCapsule(start: Point, end: Point, thickness: number, smoothness: number): string {
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  const length = Math.sqrt(dx * dx + dy * dy);
+
+  if (length === 0) {
+    // Just a circle
+    const radius = thickness / 2;
+    return `
+      M ${start.x - radius} ${start.y}
+      A ${radius} ${radius} 0 1 0 ${start.x + radius} ${start.y}
+      A ${radius} ${radius} 0 1 0 ${start.x - radius} ${start.y}
+      Z
+    `;
+  }
+
+  const perpX = -dy / length;
+  const perpY = dx / length;
+  const halfThickness = thickness / 2;
+
+  // Four corner points of the rectangle
+  const p1 = { x: start.x + perpX * halfThickness, y: start.y + perpY * halfThickness };
+  const p2 = { x: end.x + perpX * halfThickness, y: end.y + perpY * halfThickness };
+  const p3 = { x: end.x - perpX * halfThickness, y: end.y - perpY * halfThickness };
+  const p4 = { x: start.x - perpX * halfThickness, y: start.y - perpY * halfThickness };
+
+  // Create path with rounded ends
+  return `
+    M ${p1.x} ${p1.y}
+    L ${p2.x} ${p2.y}
+    A ${halfThickness} ${halfThickness} 0 0 1 ${p3.x} ${p3.y}
+    L ${p4.x} ${p4.y}
+    A ${halfThickness} ${halfThickness} 0 0 1 ${p1.x} ${p1.y}
+    Z
+  `;
+}
+
+/**
+ * Create a rounded cap at the end of a stroke
+ */
+function createRoundedCap(
+  left: Point,
+  right: Point,
+  center: Point,
+  thickness: number,
+  isStart: boolean
+): string {
+  const radius = thickness / 2;
+
+  if (isStart) {
+    // Arc from right to left around the start
+    return `M ${right.x} ${right.y} A ${radius} ${radius} 0 0 1 ${left.x} ${left.y} `;
+  } else {
+    // Arc from left to right around the end
+    return `A ${radius} ${radius} 0 0 1 ${right.x} ${right.y} `;
+  }
 }
 
 /**
@@ -89,8 +236,8 @@ function generateGridPattern(
 ): string {
   let path = '';
 
-  // Add some padding to ensure grid covers the entire shape
-  const padding = gridSpacing;
+  // Add padding to ensure grid covers everything
+  const padding = gridSpacing * 2;
   const startX = Math.floor(bounds.minX / gridSpacing) * gridSpacing - padding;
   const startY = Math.floor(bounds.minY / gridSpacing) * gridSpacing - padding;
   const endX = Math.ceil(bounds.maxX / gridSpacing) * gridSpacing + padding;
@@ -113,7 +260,6 @@ function generateGridPattern(
  * Get bounding box of SVG path
  */
 function getPathBounds(pathData: string): { minX: number; minY: number; maxX: number; maxY: number } {
-  // Simple regex-based parser for M, L, Q, Z commands
   const coords: number[] = [];
   const numbers = pathData.match(/[-+]?[0-9]*\.?[0-9]+/g);
 
@@ -134,104 +280,6 @@ function getPathBounds(pathData: string): { minX: number; minY: number; maxX: nu
     minY: Math.min(...yCoords),
     maxY: Math.max(...yCoords),
   };
-}
-
-/**
- * Create a blob-like path with smooth curves
- */
-function createBlobPath(points: Point[], thickness: number, curved: boolean, smoothness: number): string {
-  if (points.length < 2) return '';
-
-  const halfThickness = thickness / 2;
-
-  if (points.length === 2) {
-    // Simple stroke - just a rectangle
-    return createSimpleStroke(points[0], points[1], thickness);
-  }
-
-  // Multi-point path - create offset curves
-  const leftSide: Point[] = [];
-  const rightSide: Point[] = [];
-
-  for (let i = 0; i < points.length; i++) {
-    const curr = points[i];
-    const perpendicular = getPerpendicular(points, i);
-
-    leftSide.push({
-      x: curr.x + perpendicular.x * halfThickness,
-      y: curr.y + perpendicular.y * halfThickness,
-    });
-
-    rightSide.push({
-      x: curr.x - perpendicular.x * halfThickness,
-      y: curr.y - perpendicular.y * halfThickness,
-    });
-  }
-
-  // Build path - start at first left point
-  let path = `M ${leftSide[0].x} ${leftSide[0].y} `;
-
-  // Left side to end
-  for (let i = 1; i < leftSide.length; i++) {
-    if (curved && smoothness > 50) {
-      const prev = leftSide[i - 1];
-      const curr = leftSide[i];
-      const cpx = (prev.x + curr.x) / 2;
-      const cpy = (prev.y + curr.y) / 2;
-      path += `Q ${cpx} ${cpy} ${curr.x} ${curr.y} `;
-    } else {
-      path += `L ${leftSide[i].x} ${leftSide[i].y} `;
-    }
-  }
-
-  // Connect to right side end
-  path += `L ${rightSide[rightSide.length - 1].x} ${rightSide[rightSide.length - 1].y} `;
-
-  // Right side back to start (reversed)
-  for (let i = rightSide.length - 2; i >= 0; i--) {
-    if (curved && smoothness > 50) {
-      const curr = rightSide[i];
-      const next = rightSide[i + 1];
-      const cpx = (curr.x + next.x) / 2;
-      const cpy = (curr.y + next.y) / 2;
-      path += `Q ${cpx} ${cpy} ${curr.x} ${curr.y} `;
-    } else {
-      path += `L ${rightSide[i].x} ${rightSide[i].y} `;
-    }
-  }
-
-  // Close path back to start
-  path += `Z `;
-
-  return path;
-}
-
-/**
- * Create a simple stroke between two points
- */
-function createSimpleStroke(start: Point, end: Point, thickness: number): string {
-  const dx = end.x - start.x;
-  const dy = end.y - start.y;
-  const length = Math.sqrt(dx * dx + dy * dy);
-
-  if (length === 0) return '';
-
-  const perpX = -dy / length;
-  const perpY = dx / length;
-  const halfThickness = thickness / 2;
-
-  const p1 = { x: start.x + perpX * halfThickness, y: start.y + perpY * halfThickness };
-  const p2 = { x: end.x + perpX * halfThickness, y: end.y + perpY * halfThickness };
-  const p3 = { x: end.x - perpX * halfThickness, y: end.y - perpY * halfThickness };
-  const p4 = { x: start.x - perpX * halfThickness, y: start.y - perpY * halfThickness };
-
-  return `
-    M ${p1.x} ${p1.y}
-    L ${p2.x} ${p2.y}
-    L ${p3.x} ${p3.y}
-    L ${p4.x} ${p4.y}
-    Z
-  `;
 }
 
 /**
