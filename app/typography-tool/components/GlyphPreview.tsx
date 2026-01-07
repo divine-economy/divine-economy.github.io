@@ -24,6 +24,12 @@ export function GlyphPreview({ character, size = 200 }: GlyphPreviewProps) {
         const viewBoxSize = 1000;
         const xOffset = (viewBoxSize - glyph.advanceWidth) / 2;
         const yOffset = (viewBoxSize - CAP_HEIGHT) / 2;
+        const transform = `translate(${xOffset}, ${yOffset})`;
+        const clipId = `clip-${character}-${Date.now()}`;
+
+        // Calculate grid line color
+        const colorValue = Math.round((parameters.gridLineLightness / 100) * 255);
+        const gridColor = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
 
         const svg = `
           <svg
@@ -33,10 +39,23 @@ export function GlyphPreview({ character, size = 200 }: GlyphPreviewProps) {
             xmlns="http://www.w3.org/2000/svg"
             style="background: transparent;"
           >
+            <defs>
+              <clipPath id="${clipId}">
+                <path d="${glyph.svgPath}" transform="${transform}" />
+              </clipPath>
+            </defs>
             <path
               d="${glyph.svgPath}"
               fill="currentColor"
-              transform="translate(${xOffset}, ${yOffset})"
+              transform="${transform}"
+            />
+            <path
+              d="${glyph.gridPath}"
+              fill="none"
+              stroke="${gridColor}"
+              stroke-width="${parameters.gridLineWidth}"
+              transform="${transform}"
+              clip-path="url(#${clipId})"
             />
           </svg>
         `;
@@ -87,6 +106,7 @@ export function TextPreview({ text, fontSize = 72 }: TextPreviewProps) {
             character: ' ',
             unicode: 32,
             svgPath: '',
+            gridPath: '',
             advanceWidth: 300,
           });
           totalWidth += 300;
@@ -108,16 +128,43 @@ export function TextPreview({ text, fontSize = 72 }: TextPreviewProps) {
       const width = totalWidth * scale;
       const height = 1000 * scale;
 
-      let paths = '';
+      // Calculate grid line color
+      const colorValue = Math.round((parameters.gridLineLightness / 100) * 255);
+      const gridColor = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
+
+      let clipPaths = '';
+      let blobPaths = '';
+      let gridPaths = '';
       let xOffset = 0;
 
-      for (const glyph of glyphs) {
+      for (let i = 0; i < glyphs.length; i++) {
+        const glyph = glyphs[i];
         if (glyph.svgPath) {
-          paths += `
+          const transform = `translate(${xOffset}, 0) scale(${scale})`;
+          const clipId = `clip-text-${i}-${Date.now()}`;
+
+          clipPaths += `
+            <clipPath id="${clipId}">
+              <path d="${glyph.svgPath}" transform="${transform}" />
+            </clipPath>
+          `;
+
+          blobPaths += `
             <path
               d="${glyph.svgPath}"
               fill="currentColor"
-              transform="translate(${xOffset}, 0) scale(${scale})"
+              transform="${transform}"
+            />
+          `;
+
+          gridPaths += `
+            <path
+              d="${glyph.gridPath}"
+              fill="none"
+              stroke="${gridColor}"
+              stroke-width="${parameters.gridLineWidth}"
+              transform="${transform}"
+              clip-path="url(#${clipId})"
             />
           `;
         }
@@ -132,7 +179,11 @@ export function TextPreview({ text, fontSize = 72 }: TextPreviewProps) {
           xmlns="http://www.w3.org/2000/svg"
           style="background: transparent;"
         >
-          ${paths}
+          <defs>
+            ${clipPaths}
+          </defs>
+          ${blobPaths}
+          ${gridPaths}
         </svg>
       `;
 
