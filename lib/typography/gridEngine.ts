@@ -16,6 +16,9 @@ export function generateGlyph(
   params: Parameters
 ): { svgPath: string; gridPath: string; advanceWidth: number } {
   try {
+    console.error('=== GRIDENGINE RUNNING ===');
+    console.error('Parameters:', params);
+
     // Step 1: Generate smooth blob shape (this is the letter itself)
     const svgPath = generateBlobShape(skeleton, params);
     console.log('Generated blob path:', svgPath.substring(0, 100) + '...');
