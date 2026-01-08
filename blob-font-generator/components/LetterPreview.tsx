@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { letterTemplates } from '@/lib/letterTemplates';
-import { generateGridPattern, generateSmoothingFilter, GridParams } from '@/lib/gridOverlay';
-import { getBlobTransform, getTotalBlur, BlobParams } from '@/lib/blobGenerator';
+import { generateGridPattern, generateCurvatureFilter, GridParams } from '@/lib/gridOverlay';
+import { getBlobTransform, getSmoothnessBlur, getCurvature, BlobParams } from '@/lib/blobGenerator';
 
 interface LetterPreviewProps {
   letter: string;
@@ -37,9 +37,11 @@ export function LetterPreview({
   const uniqueId = `letter-${letter}-${Math.random().toString(36).substr(2, 9)}`;
   const gridPatternId = `grid-${uniqueId}`;
   const clipPathId = `clip-${uniqueId}`;
-  const filterId = `filter-${uniqueId}`;
+  const curvatureFilterId = `curvature-${uniqueId}`;
+  const combinedFilterId = `combined-${uniqueId}`;
 
-  const blur = getTotalBlur(blobParams);
+  const smoothnessBlur = getSmoothnessBlur(blobParams);
+  const curvature = getCurvature(blobParams);
   const transform = getBlobTransform(blobParams);
 
   // Calculate viewBox based on vertical crop
@@ -53,6 +55,52 @@ export function LetterPreview({
   const letterWidth = monospaceWidth || template.width;
   const aspectRatio = letterWidth / 100;
   const actualWidth = size * aspectRatio;
+
+  // Generate combined filter with curvature and smoothness
+  const generateCombinedFilter = () => {
+    if (curvature === 0 && smoothnessBlur === 0) return '';
+
+    const curvatureRadius = (curvature / 100) * 8;
+    const parts = [];
+
+    if (curvature > 0) {
+      parts.push(`
+        <!-- Dilate to expand and round -->
+        <feMorphology operator="dilate" radius="${curvatureRadius}" result="dilated" />
+        <!-- Blur slightly to smooth the dilation -->
+        <feGaussianBlur in="dilated" stdDeviation="${curvatureRadius * 0.3}" result="blurred" />
+        <!-- Erode back to original size with rounded corners -->
+        <feMorphology in="blurred" operator="erode" radius="${curvatureRadius}" result="rounded" />
+      `);
+    }
+
+    if (smoothnessBlur > 0) {
+      const inputSource = curvature > 0 ? 'rounded' : 'SourceGraphic';
+      parts.push(`
+        <!-- Apply smoothness blur -->
+        <feGaussianBlur in="${inputSource}" stdDeviation="${smoothnessBlur}" result="smoothed" />
+      `);
+    }
+
+    // Sharpen edges
+    const finalInput = smoothnessBlur > 0 ? 'smoothed' : (curvature > 0 ? 'rounded' : 'SourceGraphic');
+    if (curvature > 0) {
+      parts.push(`
+        <!-- Sharpen edges while keeping rounded corners -->
+        <feComponentTransfer in="${finalInput}">
+          <feFuncA type="discrete" tableValues="0 1" />
+        </feComponentTransfer>
+      `);
+    }
+
+    return `
+      <filter id="${combinedFilterId}">
+        ${parts.join('\n')}
+      </filter>
+    `;
+  };
+
+  const hasFilters = curvature > 0 || smoothnessBlur > 0;
 
   return (
     <div
@@ -73,14 +121,18 @@ export function LetterPreview({
           {/* Grid pattern */}
           <g dangerouslySetInnerHTML={{ __html: generateGridPattern(gridPatternId, gridParams) }} />
 
-          {/* Smoothing filter */}
-          {blur > 0 && (
-            <g dangerouslySetInnerHTML={{ __html: generateSmoothingFilter(filterId, blur) }} />
+          {/* Combined curvature and smoothness filter */}
+          {hasFilters && (
+            <g dangerouslySetInnerHTML={{ __html: generateCombinedFilter() }} />
           )}
 
           {/* Clip path for grid */}
           <clipPath id={clipPathId}>
-            <path d={template.path} transform={transform} />
+            <path
+              d={template.path}
+              transform={transform}
+              filter={hasFilters ? `url(#${combinedFilterId})` : undefined}
+            />
           </clipPath>
         </defs>
 
@@ -89,7 +141,7 @@ export function LetterPreview({
           d={template.path}
           fill={letterColor}
           transform={transform}
-          filter={blur > 0 ? `url(#${filterId})` : undefined}
+          filter={hasFilters ? `url(#${combinedFilterId})` : undefined}
         />
 
         {/* Grid overlay clipped to letter shape */}

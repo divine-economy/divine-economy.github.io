@@ -54,3 +54,33 @@ export function generateSmoothingFilter(
     </filter>
   `;
 }
+
+/**
+ * Generate SVG filter for curvature/rounding effect
+ * Uses morphological operations to round out hard edges
+ */
+export function generateCurvatureFilter(
+  id: string,
+  curvature: number
+): string {
+  if (curvature === 0) return '';
+
+  // Map curvature (0-100) to radius (0-8)
+  const radius = (curvature / 100) * 8;
+
+  return `
+    <filter id="${id}">
+      <!-- Dilate to expand and round -->
+      <feMorphology operator="dilate" radius="${radius}" />
+      <!-- Blur slightly to smooth the dilation -->
+      <feGaussianBlur stdDeviation="${radius * 0.3}" />
+      <!-- Erode back to original size with rounded corners -->
+      <feMorphology operator="erode" radius="${radius}" />
+      <!-- Sharpen edges while keeping rounded corners -->
+      <feComponentTransfer>
+        <feFuncA type="discrete" tableValues="0 1" />
+      </feComponentTransfer>
+    </filter>
+  `;
+}
+
