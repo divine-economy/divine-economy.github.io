@@ -60,17 +60,17 @@ export function LetterPreview({
   const generateCombinedFilter = () => {
     if (curvature === 0 && smoothnessBlur === 0) return '';
 
-    // Use smaller radius for more gradual rounding
-    const curvatureRadius = (curvature / 100) * 4;
+    // Use even smaller radius for very gradual rounding
+    const curvatureRadius = (curvature / 100) * 2.5;
     const parts = [];
 
     if (curvature > 0) {
-      // More gradual morphology with larger blur
+      // Very gradual morphology with proportionally larger blur
       parts.push(`
         <!-- Dilate to expand and round -->
         <feMorphology operator="dilate" radius="${curvatureRadius}" result="dilated" />
-        <!-- Larger blur for smoother rounding -->
-        <feGaussianBlur in="dilated" stdDeviation="${curvatureRadius * 0.8}" result="blurred" />
+        <!-- Much larger blur for smoother, more even rounding -->
+        <feGaussianBlur in="dilated" stdDeviation="${curvatureRadius * 1.2}" result="blurred" />
         <!-- Erode back to original size with rounded corners -->
         <feMorphology in="blurred" operator="erode" radius="${curvatureRadius}" result="rounded" />
       `);
