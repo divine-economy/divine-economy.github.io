@@ -89,6 +89,50 @@ export function DisplayControls({
               <span>100px</span>
             </div>
           </div>
+
+          {/* Vertical Crop */}
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Vertical Crop: {displayParams.verticalCrop}
+            </label>
+            <input
+              type="range"
+              min="-50"
+              max="50"
+              value={displayParams.verticalCrop}
+              onChange={(e) =>
+                onDisplayParamsChange({
+                  ...displayParams,
+                  verticalCrop: parseInt(e.target.value),
+                })
+              }
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+            />
+            <div className="flex justify-between text-xs text-gray-500 mt-1">
+              <span>-50 (show more)</span>
+              <span>50 (crop)</span>
+            </div>
+          </div>
+
+          {/* Monospace Toggle */}
+          <div>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={displayParams.monospace}
+                onChange={(e) =>
+                  onDisplayParamsChange({
+                    ...displayParams,
+                    monospace: e.target.checked,
+                  })
+                }
+                className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-sm font-medium">
+                Monospace (equal letter width)
+              </span>
+            </label>
+          </div>
         </div>
       </div>
 

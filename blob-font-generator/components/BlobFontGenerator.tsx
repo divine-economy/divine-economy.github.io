@@ -14,12 +14,13 @@ export function BlobFontGenerator() {
   const [blobParams, setBlobParams] = useState<BlobParams>({
     thickness: 90,
     smoothness: 20,
+    curvature: 30,
   });
 
   const [gridParams, setGridParams] = useState<GridParams>({
     spacing: 15,
     lineWidth: 1.5,
-    lightness: 60,
+    gridColor: '#999999',
   });
 
   const [displayParams, setDisplayParams] = useState<DisplayParams>(defaultDisplayParams);
@@ -62,31 +63,33 @@ export function BlobFontGenerator() {
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left: Controls */}
-          <div className="lg:col-span-1 space-y-6">
-            <ParameterControls
-              blobParams={blobParams}
-              gridParams={gridParams}
-              onBlobParamsChange={setBlobParams}
-              onGridParamsChange={setGridParams}
-            />
+          <div className="lg:col-span-1">
+            <div className="lg:sticky lg:top-8 lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto space-y-6">
+              <ParameterControls
+                blobParams={blobParams}
+                gridParams={gridParams}
+                onBlobParamsChange={setBlobParams}
+                onGridParamsChange={setGridParams}
+              />
 
-            <DisplayControls
-              displayParams={displayParams}
-              onDisplayParamsChange={setDisplayParams}
-            />
+              <DisplayControls
+                displayParams={displayParams}
+                onDisplayParamsChange={setDisplayParams}
+              />
 
-            {/* Export Button */}
-            <button
-              onClick={handleExportFont}
-              disabled={isExporting}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
-            >
-              {isExporting ? 'Generating...' : 'Export Font (.otf)'}
-            </button>
+              {/* Export Button */}
+              <button
+                onClick={handleExportFont}
+                disabled={isExporting}
+                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+              >
+                {isExporting ? 'Generating...' : 'Export Font (.otf)'}
+              </button>
 
-            <p className="text-xs text-gray-500 text-center">
-              Export and install on your computer or use in Figma
-            </p>
+              <p className="text-xs text-gray-500 text-center">
+                Export and install on your computer or use in Figma
+              </p>
+            </div>
           </div>
 
           {/* Right: Preview */}

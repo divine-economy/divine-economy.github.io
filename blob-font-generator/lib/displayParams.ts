@@ -8,6 +8,8 @@ export interface DisplayParams {
   verticalVariance: number; // 0 to 30 (pixels)
   letterColor: string; // hex color
   backgroundColor: string; // hex color
+  verticalCrop: number; // -50 to 50 (percentage of overflow)
+  monospace: boolean; // equal width for all letters
 }
 
 export const defaultDisplayParams: DisplayParams = {
@@ -18,6 +20,8 @@ export const defaultDisplayParams: DisplayParams = {
   verticalVariance: 0,
   letterColor: '#000000',
   backgroundColor: '#F9FAFB',
+  verticalCrop: 0,
+  monospace: false,
 };
 
 /**

@@ -3,6 +3,7 @@
 export interface BlobParams {
   thickness: number; // 30-150
   smoothness: number; // 0-100
+  curvature: number; // 0-100 (additional rounding)
 }
 
 /**
@@ -73,4 +74,20 @@ export function getStrokeThickness(params: BlobParams): number {
 export function getSmoothnessBlur(params: BlobParams): number {
   // Map smoothness (0-100) to blur (0-3)
   return (params.smoothness / 100) * 3;
+}
+
+/**
+ * Get filter blur for curvature/rounding effect
+ */
+export function getCurvatureBlur(params: BlobParams): number {
+  // Map curvature (0-100) to blur (0-5)
+  // This adds extra smoothing to round out hard edges
+  return (params.curvature / 100) * 5;
+}
+
+/**
+ * Get combined blur for both smoothness and curvature
+ */
+export function getTotalBlur(params: BlobParams): number {
+  return getSmoothnessBlur(params) + getCurvatureBlur(params);
 }

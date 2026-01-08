@@ -3,15 +3,7 @@
 export interface GridParams {
   spacing: number; // 5-40
   lineWidth: number; // 0.5-5
-  lightness: number; // 0-100 (0 = black, 100 = white)
-}
-
-/**
- * Get the grid color based on lightness parameter
- */
-export function getGridColor(lightness: number): string {
-  const value = Math.round((lightness / 100) * 255);
-  return `rgb(${value}, ${value}, ${value})`;
+  gridColor: string; // hex color
 }
 
 /**
@@ -21,8 +13,7 @@ export function generateGridPattern(
   id: string,
   params: GridParams
 ): string {
-  const { spacing, lineWidth } = params;
-  const color = getGridColor(params.lightness);
+  const { spacing, lineWidth, gridColor } = params;
 
   return `
     <pattern id="${id}" width="${spacing}" height="${spacing}" patternUnits="userSpaceOnUse">
@@ -32,7 +23,7 @@ export function generateGridPattern(
         y1="0"
         x2="${spacing / 2}"
         y2="${spacing}"
-        stroke="${color}"
+        stroke="${gridColor}"
         stroke-width="${lineWidth}"
       />
       <!-- Horizontal line -->
@@ -41,7 +32,7 @@ export function generateGridPattern(
         y1="${spacing / 2}"
         x2="${spacing}"
         y2="${spacing / 2}"
-        stroke="${color}"
+        stroke="${gridColor}"
         stroke-width="${lineWidth}"
       />
     </pattern>

@@ -3,7 +3,7 @@
 import React from 'react';
 import { letterTemplates } from '@/lib/letterTemplates';
 import { generateGridPattern, generateSmoothingFilter, GridParams } from '@/lib/gridOverlay';
-import { getBlobTransform, getSmoothnessBlur, BlobParams } from '@/lib/blobGenerator';
+import { getBlobTransform, getTotalBlur, BlobParams } from '@/lib/blobGenerator';
 
 interface LetterPreviewProps {
   letter: string;
@@ -13,6 +13,8 @@ interface LetterPreviewProps {
   rotation?: number;
   verticalOffset?: number;
   letterColor?: string;
+  verticalCrop?: number;
+  monospaceWidth?: number;
 }
 
 export function LetterPreview({
@@ -23,6 +25,8 @@ export function LetterPreview({
   rotation = 0,
   verticalOffset = 0,
   letterColor = '#000000',
+  verticalCrop = 0,
+  monospaceWidth,
 }: LetterPreviewProps) {
   const template = letterTemplates[letter];
 
@@ -35,8 +39,20 @@ export function LetterPreview({
   const clipPathId = `clip-${uniqueId}`;
   const filterId = `filter-${uniqueId}`;
 
-  const blur = getSmoothnessBlur(blobParams);
+  const blur = getTotalBlur(blobParams);
   const transform = getBlobTransform(blobParams);
+
+  // Calculate viewBox based on vertical crop
+  // Negative crop = show more (zoom out), positive = show less (zoom in/crop)
+  const viewBoxPadding = verticalCrop * -0.5; // -50 to 50 becomes 25 to -25
+  const viewBoxY = 0 + viewBoxPadding;
+  const viewBoxHeight = 100 - (viewBoxPadding * 2);
+  const viewBox = `0 ${viewBoxY} 100 ${viewBoxHeight}`;
+
+  // Calculate width for monospace or natural width
+  const letterWidth = monospaceWidth || template.width;
+  const aspectRatio = letterWidth / 100;
+  const actualWidth = size * aspectRatio;
 
   return (
     <div
@@ -47,9 +63,10 @@ export function LetterPreview({
       }}
     >
       <svg
-        width={size}
+        width={actualWidth}
         height={size}
-        viewBox="0 0 100 100"
+        viewBox={viewBox}
+        preserveAspectRatio="xMidYMid slice"
         style={{ display: 'block' }}
       >
         <defs>

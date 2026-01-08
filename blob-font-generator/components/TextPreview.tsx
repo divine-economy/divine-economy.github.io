@@ -69,6 +69,8 @@ export function TextPreview({
                     rotation={rotation}
                     verticalOffset={verticalOffset}
                     letterColor={displayParams.letterColor}
+                    verticalCrop={displayParams.verticalCrop}
+                    monospaceWidth={displayParams.monospace ? 100 : undefined}
                   />
                 );
               })}

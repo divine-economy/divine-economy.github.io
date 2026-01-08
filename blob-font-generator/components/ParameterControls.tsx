@@ -70,6 +70,30 @@ export function ParameterControls({
               <span>100%</span>
             </div>
           </div>
+
+          {/* Curvature */}
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Curvature: {blobParams.curvature}%
+            </label>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={blobParams.curvature}
+              onChange={(e) =>
+                onBlobParamsChange({
+                  ...blobParams,
+                  curvature: parseInt(e.target.value),
+                })
+              }
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+            />
+            <div className="flex justify-between text-xs text-gray-500 mt-1">
+              <span>0% (sharp)</span>
+              <span>100% (round)</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -126,27 +150,35 @@ export function ParameterControls({
             </div>
           </div>
 
-          {/* Grid Lightness */}
+          {/* Grid Color */}
           <div>
             <label className="block text-sm font-medium mb-2">
-              Grid Lightness: {gridParams.lightness}%
+              Grid Color
             </label>
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={gridParams.lightness}
-              onChange={(e) =>
-                onGridParamsChange({
-                  ...gridParams,
-                  lightness: parseInt(e.target.value),
-                })
-              }
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-            />
-            <div className="flex justify-between text-xs text-gray-500 mt-1">
-              <span>0% (Black)</span>
-              <span>100% (White)</span>
+            <div className="flex gap-2 items-center">
+              <input
+                type="color"
+                value={gridParams.gridColor}
+                onChange={(e) =>
+                  onGridParamsChange({
+                    ...gridParams,
+                    gridColor: e.target.value,
+                  })
+                }
+                className="h-10 w-20 rounded cursor-pointer"
+              />
+              <input
+                type="text"
+                value={gridParams.gridColor}
+                onChange={(e) =>
+                  onGridParamsChange({
+                    ...gridParams,
+                    gridColor: e.target.value,
+                  })
+                }
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm font-mono"
+                placeholder="#999999"
+              />
             </div>
           </div>
         </div>
