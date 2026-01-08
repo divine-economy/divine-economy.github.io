@@ -2,10 +2,12 @@
 
 import React, { useState } from 'react';
 import { ParameterControls } from './ParameterControls';
+import { DisplayControls } from './DisplayControls';
 import { TextPreview } from './TextPreview';
 import { LetterPreview } from './LetterPreview';
 import { BlobParams } from '@/lib/blobGenerator';
 import { GridParams } from '@/lib/gridOverlay';
+import { DisplayParams, defaultDisplayParams } from '@/lib/displayParams';
 import { generateFont, downloadFont } from '@/lib/fontExporter';
 
 export function BlobFontGenerator() {
@@ -20,7 +22,9 @@ export function BlobFontGenerator() {
     lightness: 60,
   });
 
-  const [customText, setCustomText] = useState('HELLO');
+  const [displayParams, setDisplayParams] = useState<DisplayParams>(defaultDisplayParams);
+
+  const [customText, setCustomText] = useState('HELLO WORLD');
   const [isExporting, setIsExporting] = useState(false);
 
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -58,7 +62,7 @@ export function BlobFontGenerator() {
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left: Controls */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 space-y-6">
             <ParameterControls
               blobParams={blobParams}
               gridParams={gridParams}
@@ -66,16 +70,21 @@ export function BlobFontGenerator() {
               onGridParamsChange={setGridParams}
             />
 
+            <DisplayControls
+              displayParams={displayParams}
+              onDisplayParamsChange={setDisplayParams}
+            />
+
             {/* Export Button */}
             <button
               onClick={handleExportFont}
               disabled={isExporting}
-              className="w-full mt-6 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
             >
               {isExporting ? 'Generating...' : 'Export Font (.otf)'}
             </button>
 
-            <p className="text-xs text-gray-500 mt-2 text-center">
+            <p className="text-xs text-gray-500 text-center">
               Export and install on your computer or use in Figma
             </p>
           </div>
@@ -91,14 +100,14 @@ export function BlobFontGenerator() {
                 onChange={(e) => setCustomText(e.target.value)}
                 placeholder="Type your text here..."
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none mb-4"
-                maxLength={20}
+                maxLength={50}
               />
-              <div className="bg-gray-50 rounded-lg p-4 min-h-[120px]">
+              <div className="rounded-lg overflow-hidden min-h-[120px]">
                 <TextPreview
                   text={customText}
                   blobParams={blobParams}
                   gridParams={gridParams}
-                  letterSize={100}
+                  displayParams={displayParams}
                 />
               </div>
             </div>
