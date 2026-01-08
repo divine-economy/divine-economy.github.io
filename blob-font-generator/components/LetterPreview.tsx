@@ -60,15 +60,17 @@ export function LetterPreview({
   const generateCombinedFilter = () => {
     if (curvature === 0 && smoothnessBlur === 0) return '';
 
-    const curvatureRadius = (curvature / 100) * 8;
+    // Use smaller radius for more gradual rounding
+    const curvatureRadius = (curvature / 100) * 4;
     const parts = [];
 
     if (curvature > 0) {
+      // More gradual morphology with larger blur
       parts.push(`
         <!-- Dilate to expand and round -->
         <feMorphology operator="dilate" radius="${curvatureRadius}" result="dilated" />
-        <!-- Blur slightly to smooth the dilation -->
-        <feGaussianBlur in="dilated" stdDeviation="${curvatureRadius * 0.3}" result="blurred" />
+        <!-- Larger blur for smoother rounding -->
+        <feGaussianBlur in="dilated" stdDeviation="${curvatureRadius * 0.8}" result="blurred" />
         <!-- Erode back to original size with rounded corners -->
         <feMorphology in="blurred" operator="erode" radius="${curvatureRadius}" result="rounded" />
       `);
@@ -126,14 +128,15 @@ export function LetterPreview({
             <g dangerouslySetInnerHTML={{ __html: generateCombinedFilter() }} />
           )}
 
-          {/* Clip path for grid */}
-          <clipPath id={clipPathId}>
+          {/* Mask for grid overlay using filtered shape */}
+          <mask id={clipPathId}>
             <path
               d={template.path}
               transform={transform}
+              fill="white"
               filter={hasFilters ? `url(#${combinedFilterId})` : undefined}
             />
-          </clipPath>
+          </mask>
         </defs>
 
         {/* Letter shape with custom color */}
@@ -144,12 +147,12 @@ export function LetterPreview({
           filter={hasFilters ? `url(#${combinedFilterId})` : undefined}
         />
 
-        {/* Grid overlay clipped to letter shape */}
+        {/* Grid overlay masked to letter shape */}
         <rect
           width="100"
           height="100"
           fill={`url(#${gridPatternId})`}
-          clipPath={`url(#${clipPathId})`}
+          mask={`url(#${clipPathId})`}
         />
       </svg>
     </div>
