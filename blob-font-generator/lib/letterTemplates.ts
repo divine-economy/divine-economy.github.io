@@ -99,7 +99,7 @@ export const letterTemplates: Record<string, LetterTemplate> = {
       Q 90,36 86,34
       Q 80,32 75,33
       Q 70,35 68,40
-      L 68,60
+      Q 65,50 68,60
       Q 70,65 75,67
       Q 80,68 86,66
       Q 90,64 92,60
@@ -220,8 +220,8 @@ export const letterTemplates: Record<string, LetterTemplate> = {
       Q 90,36 86,34
       Q 80,32 75,33
       Q 70,35 68,40
-      L 68,48
-      Q 68,50 70,50
+      Q 66,44 66,48
+      Q 66,50 68,50
       L 78,50
       Q 82,50 84,53
       Q 85,56 85,60
@@ -237,8 +237,10 @@ export const letterTemplates: Record<string, LetterTemplate> = {
       L 72,60
       Q 71,60 71,58
       L 71,55
-      Q 71,54 68,55
-      L 68,60
+      Q 71,54 69,55
+      Q 67,56 66,58
+      Q 65,60 66,62
+      Q 67,64 68,64
       Q 70,65 75,67
       Q 80,68 86,66
       Q 90,64 92,60
