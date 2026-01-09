@@ -38,6 +38,7 @@ export function BlobFontGenerator() {
         fontName: 'BlobFont',
         thickness: blobParams.thickness,
         smoothness: blobParams.smoothness,
+        curvature: blobParams.curvature,
       });
 
       downloadFont(arrayBuffer, 'BlobFont.otf');

@@ -1,11 +1,13 @@
 // Font export functionality using opentype.js
 import opentype from 'opentype.js';
 import { letterTemplates } from './letterTemplates';
+import { transformPath } from './pathProcessor';
 
 export interface FontExportParams {
   fontName: string;
   thickness: number;
   smoothness: number;
+  curvature: number;
 }
 
 /**
@@ -84,7 +86,7 @@ function svgPathToGlyphPath(svgPath: string, scale: number = 10): opentype.Path 
  * Generate OpenType font from letter templates
  */
 export async function generateFont(params: FontExportParams): Promise<ArrayBuffer> {
-  const { fontName, thickness } = params;
+  const { fontName, thickness, smoothness, curvature } = params;
 
   // Create glyphs for each letter
   const glyphs: opentype.Glyph[] = [];
@@ -98,8 +100,8 @@ export async function generateFont(params: FontExportParams): Promise<ArrayBuffe
   });
   glyphs.push(notdefGlyph);
 
-  // Calculate scale based on thickness
-  const scale = 7 + (thickness / 100) * 3; // 7-10 scale
+  // Fixed scale for converting SVG coordinates to font units
+  const scale = 10;
 
   // Add letter glyphs
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -107,7 +109,14 @@ export async function generateFont(params: FontExportParams): Promise<ArrayBuffe
     const template = letterTemplates[char];
     if (!template) continue;
 
-    const glyphPath = svgPathToGlyphPath(template.path, scale);
+    // Transform the path with blob parameters (thickness, curvature, smoothness)
+    const modifiedPath = transformPath(template.path, {
+      thickness,
+      smoothness,
+      curvature,
+    });
+
+    const glyphPath = svgPathToGlyphPath(modifiedPath, scale);
 
     const glyph = new opentype.Glyph({
       name: char,
