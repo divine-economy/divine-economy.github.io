@@ -74,6 +74,8 @@ export default function TextPreview({
         style={{
           display: 'inline-block',
           marginLeft: index === 0 ? 0 : letterSpacing,
+          width: monospace ? size : 'auto',
+          textAlign: 'center',
         }}
       >
         <LetterPreview
