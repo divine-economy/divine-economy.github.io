@@ -7,12 +7,21 @@ import { transformPath } from './pathProcessor';
 import { BlobParams } from './displayParams';
 
 // Convert SVG path to opentype.js path
+// SVG coordinates: 0-100, Y down
+// Font coordinates: 0-1000, Y up (flipped)
 function svgPathToGlyphPath(svgPath: string): opentype.Path {
   const path = new opentype.Path();
 
   if (!svgPath || svgPath.trim() === '') {
     return path;
   }
+
+  // Scale factor: SVG is 0-100, font is 0-1000
+  const scale = 10;
+
+  // Helper to convert SVG Y to font Y (flip vertical)
+  const convertY = (y: number) => (100 - y) * scale;
+  const convertX = (x: number) => x * scale;
 
   // Parse SVG path commands
   const commands = svgPath.match(/[MmLlHhVvCcSsQqTtAaZz][^MmLlHhVvCcSsQqTtAaZz]*/g);
@@ -36,107 +45,113 @@ function svgPathToGlyphPath(svgPath: string): opentype.Path {
     switch (type) {
       case 'M':
         if (values.length >= 2) {
-          currentX = values[0];
-          currentY = values[1];
+          currentX = convertX(values[0]);
+          currentY = convertY(values[1]);
           path.moveTo(currentX, currentY);
         }
         break;
 
       case 'm':
         if (values.length >= 2) {
-          currentX += values[0];
-          currentY += values[1];
+          currentX += values[0] * scale;
+          currentY -= values[1] * scale; // Y is flipped, so += becomes -=
           path.moveTo(currentX, currentY);
         }
         break;
 
       case 'L':
         if (values.length >= 2) {
-          currentX = values[0];
-          currentY = values[1];
+          currentX = convertX(values[0]);
+          currentY = convertY(values[1]);
           path.lineTo(currentX, currentY);
         }
         break;
 
       case 'l':
         if (values.length >= 2) {
-          currentX += values[0];
-          currentY += values[1];
+          currentX += values[0] * scale;
+          currentY -= values[1] * scale; // Y is flipped
           path.lineTo(currentX, currentY);
         }
         break;
 
       case 'H':
         if (values.length >= 1) {
-          currentX = values[0];
+          currentX = convertX(values[0]);
           path.lineTo(currentX, currentY);
         }
         break;
 
       case 'h':
         if (values.length >= 1) {
-          currentX += values[0];
+          currentX += values[0] * scale;
           path.lineTo(currentX, currentY);
         }
         break;
 
       case 'V':
         if (values.length >= 1) {
-          currentY = values[0];
+          currentY = convertY(values[0]);
           path.lineTo(currentX, currentY);
         }
         break;
 
       case 'v':
         if (values.length >= 1) {
-          currentY += values[0];
+          currentY -= values[0] * scale; // Y is flipped
           path.lineTo(currentX, currentY);
         }
         break;
 
       case 'C':
         if (values.length >= 6) {
-          path.curveTo(
-            values[0], values[1],
-            values[2], values[3],
-            values[4], values[5]
-          );
-          currentX = values[4];
-          currentY = values[5];
+          const x1 = convertX(values[0]);
+          const y1 = convertY(values[1]);
+          const x2 = convertX(values[2]);
+          const y2 = convertY(values[3]);
+          const x = convertX(values[4]);
+          const y = convertY(values[5]);
+          path.curveTo(x1, y1, x2, y2, x, y);
+          currentX = x;
+          currentY = y;
         }
         break;
 
       case 'c':
         if (values.length >= 6) {
-          path.curveTo(
-            currentX + values[0], currentY + values[1],
-            currentX + values[2], currentY + values[3],
-            currentX + values[4], currentY + values[5]
-          );
-          currentX += values[4];
-          currentY += values[5];
+          const x1 = currentX + values[0] * scale;
+          const y1 = currentY - values[1] * scale; // Y is flipped
+          const x2 = currentX + values[2] * scale;
+          const y2 = currentY - values[3] * scale;
+          const x = currentX + values[4] * scale;
+          const y = currentY - values[5] * scale;
+          path.curveTo(x1, y1, x2, y2, x, y);
+          currentX = x;
+          currentY = y;
         }
         break;
 
       case 'Q':
         if (values.length >= 4) {
-          path.quadTo(
-            values[0], values[1],
-            values[2], values[3]
-          );
-          currentX = values[2];
-          currentY = values[3];
+          const x1 = convertX(values[0]);
+          const y1 = convertY(values[1]);
+          const x = convertX(values[2]);
+          const y = convertY(values[3]);
+          path.quadTo(x1, y1, x, y);
+          currentX = x;
+          currentY = y;
         }
         break;
 
       case 'q':
         if (values.length >= 4) {
-          path.quadTo(
-            currentX + values[0], currentY + values[1],
-            currentX + values[2], currentY + values[3]
-          );
-          currentX += values[2];
-          currentY += values[3];
+          const x1 = currentX + values[0] * scale;
+          const y1 = currentY - values[1] * scale; // Y is flipped
+          const x = currentX + values[2] * scale;
+          const y = currentY - values[3] * scale;
+          path.quadTo(x1, y1, x, y);
+          currentX = x;
+          currentY = y;
         }
         break;
 

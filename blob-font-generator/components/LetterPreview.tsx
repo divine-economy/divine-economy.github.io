@@ -36,7 +36,7 @@ export default function LetterPreview({
 
   // Grid configuration
   const gridConfig = showGrid
-    ? generateLetterGrid(char, path, gridParams, filterId)
+    ? generateLetterGrid(char, path, gridParams, filterId, transform)
     : null;
 
   // Calculate crop viewBox

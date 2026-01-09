@@ -44,9 +44,9 @@ export const defaultGridParams: GridParams = {
 };
 
 export const defaultDisplayParams: DisplayParams = {
-  letterSpacing: 5,
-  wordSpacing: 30,
-  size: 100,
+  letterSpacing: 2,
+  wordSpacing: 15,
+  size: 40,
   rotationVariance: 0,
   verticalOffset: 0,
   verticalCrop: 100,

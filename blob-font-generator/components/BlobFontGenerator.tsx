@@ -51,7 +51,8 @@ export default function BlobFontGenerator() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Controls */}
-          <div className="lg:col-span-1 space-y-6">
+          <div className="lg:col-span-1">
+            <div className="lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto space-y-6 pb-4">
             {/* Text Input */}
             <div className="bg-white p-6 rounded-lg shadow-md">
               <h3 className="text-lg font-semibold mb-4 text-gray-800">Preview Text</h3>
@@ -111,15 +112,48 @@ export default function BlobFontGenerator() {
                 Download your custom blob font as an OTF file
               </p>
             </div>
+            </div>
           </div>
 
           {/* Right Column - Preview */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 space-y-6">
+            {/* Complete Alphabet Preview */}
             <div
-              className="rounded-lg shadow-lg p-8 min-h-[600px] flex items-center justify-center"
+              className="rounded-lg shadow-lg p-8"
+              style={{ backgroundColor: displayParams.backgroundColor }}
+            >
+              <h3 className="text-sm font-semibold text-gray-700 mb-4">Complete Character Set</h3>
+              <div className="space-y-4">
+                <div>
+                  <p className="text-xs text-gray-500 mb-2">Uppercase Letters</p>
+                  <TextPreview
+                    text="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                    blobParams={blobParams}
+                    gridParams={gridParams}
+                    displayParams={displayParams}
+                    showGrid={showGrid}
+                  />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 mb-2">Numbers</p>
+                  <TextPreview
+                    text="0123456789"
+                    blobParams={blobParams}
+                    gridParams={gridParams}
+                    displayParams={displayParams}
+                    showGrid={showGrid}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Custom Text Preview */}
+            <div
+              className="rounded-lg shadow-lg p-8 min-h-[400px] flex items-center justify-center"
               style={{ backgroundColor: displayParams.backgroundColor }}
             >
               <div className="w-full">
+                <h3 className="text-sm font-semibold text-gray-700 mb-4">Custom Text Preview</h3>
                 <TextPreview
                   text={text}
                   blobParams={blobParams}
