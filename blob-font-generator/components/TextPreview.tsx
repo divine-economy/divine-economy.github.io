@@ -43,6 +43,20 @@ export default function TextPreview({
       return; // Skip newlines for now
     }
 
+    // For spaces, add word spacing as a gap
+    if (char === ' ') {
+      letterElements.push(
+        <div
+          key={index}
+          style={{
+            display: 'inline-block',
+            width: wordSpacing,
+          }}
+        />
+      );
+      return;
+    }
+
     const path = getLetterPath(char);
     const baseWidth = getLetterWidth(char);
 
@@ -76,13 +90,6 @@ export default function TextPreview({
         />
       </div>
     );
-
-    // Update position
-    if (char === ' ') {
-      currentX += wordSpacing;
-    } else {
-      currentX += width + letterSpacing;
-    }
   });
 
   return (

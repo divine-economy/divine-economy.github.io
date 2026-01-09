@@ -24,7 +24,7 @@ export default function DisplayControls({
           </label>
           <input
             type="range"
-            min="0"
+            min="-20"
             max="50"
             value={displayParams.letterSpacing}
             onChange={(e) =>
@@ -32,6 +32,10 @@ export default function DisplayControls({
             }
             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
           />
+          <div className="flex justify-between text-xs text-gray-500 mt-1">
+            <span>-20 (Overlap)</span>
+            <span>50</span>
+          </div>
         </div>
 
         {/* Word Spacing */}
