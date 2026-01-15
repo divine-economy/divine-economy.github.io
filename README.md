@@ -5,7 +5,7 @@
     }
   </style>
 </head>
-updated february 18, 2025
+updated january 15, 2026
 
 <b>links:</b>
 
@@ -51,6 +51,7 @@ updated february 18, 2025
     <li><a href="https://elfa.ai"><b>elfa</b></a></li>
     <li><a href="https://euphoria.finance"><b>euphoria</b></a></li>
     <li><a href="https://www.herd.eco/"><b>herd</b></a></li>
+    <li><a href="https://www.legend.trade/"><b>legend</b></a></li>
 </ul>
 
 <i>2024</i><br>
