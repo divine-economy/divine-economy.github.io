@@ -47,6 +47,7 @@ updated january 15, 2026
 <ul>
     <li><a href="https://wcm.inc"><b>wcm</b></a></li>
     <li><a href="https://ii.inc"><b>intelligent internet</b></a></li>
+    <li><a href="https://miden.xyz"><b>miden</b></a></li>
     <li><a href="https://linktr.ee/avon_xyz"><b>avon</b></a></li>
     <li><a href="https://elfa.ai"><b>elfa</b></a></li>
     <li><a href="https://euphoria.finance"><b>euphoria</b></a></li>
